@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/toastr.min.css">
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <ul>
+      <li><a href="user">User</a></li>
+      <li><a href="index.html">Product</a></li>
+    </ul>
+  </nav>
+
+
+
+  <div class="tl">
+    <h1 class="title">Mouse Database</h1>
+    <input type="text" id="searchInput" placeholder="Search..." class="search-box" />
+  </div>
+
+
+  <div class="action-buttons">
+    <button class="action-btn add-product-btn" id="addProductBtn">Add Product</button>
+    <button class="action-btn delete-btn" id="deleteProductBtn">Delete</button>
+  </div>
+
+
+
+  <div class="content">
+    <table id="productTable" border="1" class="table">
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="selectAll" /></th>
+          <th>Name</th>
+          <th>Length (mm)</th>
+          <th>Width (mm)</th>
+          <th>Height (mm)</th>
+          <th>Weight (g)</th>
+          <th>Shape</th>
+          <th>Hump Placement</th>
+          <th>Front Flare</th>
+          <th>Side Curvature</th>
+          <th>Hand Compatibility</th>
+          <th>Thumb Rest</th>
+          <th>Ring Finger Rest</th>
+          <th>Material</th>
+          <th>Connectivity</th>
+          <th>Sensor</th>
+          <th>Sensor Technology</th>
+          <th>Sensor Position</th>
+          <th>DPI</th>
+          <th>Polling Rate</th>
+          <th>Tracking Speed (IPS)</th>
+          <th>Acceleration (G)</th>
+          <th>Side Buttons</th>
+          <th>Middle Buttons</th>
+        </tr>
+      </thead>
+      <tbody id="productTableBody">
+          <!-- Dữ liệu sẽ tự động thêm bằng JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <script src="/js/jquery-3.7.1.min.js"></script>
+  <script src="/js/toastr.min.js"></script>
+  <script src="/js/script.js"></script>
+</body>
+</html>

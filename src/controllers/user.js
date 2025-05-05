@@ -1,0 +1,290 @@
+import mailer from '../helpers/mailer.js'
+import crypto from 'crypto';
+import SMTP from "../../config/smtp.js";
+import User from "../models/user.js";
+import bcrypt from "bcryptjs";
+import passport from "passport";
+import dotenv from 'dotenv';
+import responseHelper from '../helpers/responseHelper.js';
+dotenv.config();
+
+
+
+//===================VIEWS==========================
+// User Management Page
+export const userPage = async (req, res) => {
+    res.render('user/admin', {
+        title: 'User management',
+        page: 'user',
+        user: req.user,
+        currentUserId: req.user._id.toString()
+    })
+}
+
+// User Log In Page
+export const logInPage = async (req, res) => {
+    res.render('user/log_in', {
+        title: 'Log In'
+    })
+}
+
+// User Sign Up Page
+export const signUpPage = async (req, res) => {
+    res.render('user/sign_up', {
+        title: 'Sign Up'
+    })
+}
+
+// User Forgot Password Page
+export const forgotPasswordPage = async (req, res) => {
+    res.render('user/forgot_password', {
+        title: 'Forgot Password'
+    })
+}
+
+// User Reset Password Page
+export const resetPasswordPage = async (req, res) => {
+    res.render('user/reset_password', {
+        title: 'Reset Password'
+    })
+}
+
+
+// [CREATE] / User
+export const createUser = async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+
+        const exist = await User.findOne({
+            $or: [
+                { username },
+                { email }
+            ],
+        });
+
+        if (exist) {
+            return responseHelper.error(res, 'Username or Email already exists.', 400);
+        }
+        const newUser = await User.create({ username, email, password });
+        responseHelper.success(res, newUser);
+    } catch (error) {
+        responseHelper.error(res, error.message);
+    }
+};
+
+/*
+ *  [GET] / Users
+ */
+
+export const getUsers = async (req, res) => {
+    try {
+        const { s } = req.query;
+        const filter = {};
+        if (s) {
+            filter["$or"] = [
+                { username: { $regex: s, $options: 'i' } },
+                { email: { $regex: s, $options: 'i' } }
+            ]
+        }
+        const users = await User.find(filter);
+        responseHelper.success(res, users);
+    } catch (error) {
+        responseHelper.error(res, error.message);
+    }
+};
+
+/*
+ * [GET] / User/:id
+ */
+
+export const getUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const user = await User.findById(id);
+
+      if (!user) {
+          responseHelper.error(res, 'User Not Found.', 404);
+      }
+      responseHelper.success(res, user)
+  } catch (error) {
+      responseHelper.error(res, error.message);
+  }
+}
+
+/*
+ * [UPDATE] / User/:id 
+ */
+
+export const updateUser = async (req, res) => {
+    try {
+        const { username, email, password, confirmPassword } = req.body;
+        const { id } = req.params;
+
+        const userExist = await User.findById(id);
+        if (!userExist) {
+            return responseHelper.error(res, 'User Not Found', 404);
+        }
+
+        const existUser = await User.findOne({
+            $or: [{ username }, { email }],
+            _id: { $ne: id },
+        });
+
+        if (existUser) {
+            return responseHelper.error(res, 'Username or Email already exists.', 400);
+        }
+
+        let updatedFields = { username, email };
+        if (password && password === confirmPassword) {
+            const passwordValidation = isValidPassword(password, confirmPassword);
+            if (passwordValidation) {
+                return responseHelper.error(res, passwordValidation);
+            }
+                const hashedPassword = await bcrypt.hash(password, 10);
+                updatedFields.password = hashedPassword;
+        }
+        const updateUser = await User.findByIdAndUpdate(id, updatedFields, { new: true });
+
+        if (!updateUser) {
+            return responseHelper.error(res, 'Update failed.', 400);
+        }
+        responseHelper.success(res, updateUser);
+    } catch (error) {
+        responseHelper.error(res, error.message);
+    }
+};
+
+/*
+ * [DEL] / Users
+ */
+
+export const deleteUsers = async (req, res) => {
+    try {
+        const { userIds } = req.body;
+        if (!userIds || userIds.length === 0) {
+            return responseHelper.error(res, 'No users selected.', 400);
+        }
+
+        if (userIds.includes(req.user._id.toString())) {
+            return responseHelper.error(res, 'You cannot delete your own account.', 400);
+        }
+
+        const result = await User.deleteMany({
+            _id: { $in: userIds }
+        })
+
+        if (result.deletedCount === 0) {            
+            return responseHelper.error(res, 'User Not Found To Delete.', 404);
+        }
+        responseHelper.success(res, '1');
+    } catch (error) {
+        responseHelper.error(res, error.message);
+    }
+}
+
+/* 
+ * [LOGIN] / User
+ */
+
+export const logIn = async (req, res, next) => {
+    passport.authenticate("local", async (err, user, info) => {
+        if (err) return next(err);
+        if (!user) {
+            return responseHelper.error(res, info.message, 400) 
+        }
+
+        req.logIn(user, async (err) => {
+            if (err) return next(err);
+            return responseHelper.success(res, '1')
+        });
+    })(req, res, next);
+};
+
+// ========================================
+export const logOutUser = (req, res) => {
+    req.logout((err) => {
+        if (err) return responseHelper.error(res, 'Logout failed', 500)
+            req.session.destroy((err) => {
+                if (err) {
+                    return responseHelper.error(res, 'Failed to destroy session', 500);
+                }
+            });
+        responseHelper.success(res, '1')
+    });
+};
+
+// [FORGOT] / Password
+export const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return responseHelper.error(res, `${email} Not Found.`, 404)
+        }
+
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const tokenExpires = Date.now() + 60 * 60 * 1000; 
+
+        user.resetToken = resetToken;
+        user.resetTokenExpires = tokenExpires;
+        await user.save();
+
+        const resetLink = `http://localhost:3002/reset-password/${resetToken}`;
+        await mailer.sendMail({
+            from: SMTP.username,
+            to: user.email,
+            subject: 'Password Reset Request',
+            html: `
+                <h3>Reset Your Password</h3>
+                <p>Click the link below to reset your password. This link will expire in 1 hour:</p>
+                <p>Click <a href="${resetLink}"><i>here</i></a> to reset your password</p>
+            `
+        });        
+        responseHelper.success(res, '1', 'A password reset link has been sent to your email.')
+    } catch (error) {
+        responseHelper.error(res, error.message)
+    }
+}
+
+// [RESET] / Password
+export const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { newPassword, confirmPassword } = req.body;
+
+    if (newPassword != confirmPassword) {
+        return responseHelper.error(res, 'Passwords do not correct.', 400);
+    }
+    try {
+        const user = await User.findOne({
+            resetToken: token,
+            resetTokenExpires: { $gt: Date.now() }
+        });
+        if (!user) {
+            return responseHelper.error(res, 'Invalid or expired token.', 404)
+        }
+
+        user.password = newPassword;
+        user.resetToken = undefined;
+        user.resetTokenExpires = undefined;
+        await user.save();
+        responseHelper.success(res, user);
+    } catch (error) {
+        responseHelper.error(res, error.message);
+    }
+}
+
+function isValidPassword(input, confirm = null) {
+    if (
+        input.length < 8 ||
+        !/[A-Z]/.test(input) ||
+        !/\d/.test(input) ||
+        !/[!@#$%^&*(),.?":{}|<>]/.test(input)
+    ) {
+        return 'Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.';
+    }
+    if (confirm && confirm !== input) {
+        return 'Passwords do not correct.';
+    }
+    return null;
+}

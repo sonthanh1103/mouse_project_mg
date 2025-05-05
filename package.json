@@ -1,0 +1,29 @@
+{
+  "name": "mouse",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon ./mouse/src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.2",
+    "nodemon": "^3.1.10"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cuongnq2511/mouse_project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cuongnq2511/mouse_project/issues"
+  },
+  "homepage": "https://github.com/cuongnq2511/mouse_project#readme",
+  "description": ""
+}
