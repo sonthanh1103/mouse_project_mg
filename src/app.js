@@ -1,6 +1,7 @@
 import express from 'express';
 import connectDB from '../config/db.js';
 import * as controller from './controllers/home.js';
+import * as userController from './controllers/user.js';
 import cors from 'cors';
 import path from 'path';
 import ejs from 'ejs';
@@ -24,6 +25,7 @@ app.use(express.json());  // Để body của request là JSON
 
 // Định tuyến API
 app.get('/', controller.home);
+router.get('/user', userController.userPage);
 
 app.use('/', router)
 

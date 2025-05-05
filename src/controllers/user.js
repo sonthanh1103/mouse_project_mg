@@ -1,23 +1,21 @@
-import mailer from '../helpers/mailer.js'
+// import mailer from '../helpers/mailer.js'
 import crypto from 'crypto';
-import SMTP from "../../config/smtp.js";
+// import SMTP from "../../config/smtp.js";
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import passport from "passport";
-import dotenv from 'dotenv';
 import responseHelper from '../helpers/responseHelper.js';
-dotenv.config();
 
 
 
 //===================VIEWS==========================
 // User Management Page
 export const userPage = async (req, res) => {
-    res.render('user/admin', {
+    res.render('users/user', {
         title: 'User management',
         page: 'user',
-        user: req.user,
-        currentUserId: req.user._id.toString()
+        // user: req.user,
+        // currentUserId: req.user._id.toString()
     })
 }
 

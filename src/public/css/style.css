@@ -94,8 +94,6 @@ body {
 
 
 
-
-
 /* Nội dung */
 .content {
   padding: 20px;
@@ -158,30 +156,30 @@ body {
   border: none;
   outline: none;
   font-size: 14px;
-  box-sizing: border-box; /* Quan trọng để padding không làm bể layout */
+  box-sizing: border-box; 
 }
 
 .dataInput:focus {
   background-color: #444444;
 }
 
-/* Sửa padding td để input fill toàn bộ */
+
 .table td {
   padding: 0;
 }
 
-/* Style cho input trong td */
+
 .table td input {
   display: block;
   width: 100%;
   height: 100%;
-  padding: 12px 20px; /* padding trong input thay cho padding td */
+  padding: 12px 20px; 
   background: #333;
   border: none;
   box-sizing: border-box;
 }
 
-/* Làm cột Name to hơn */
+
 .table td:first-child + td,
 .table th:first-child + th {
   min-width: 200px;
