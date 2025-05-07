@@ -1,6 +1,6 @@
-// import mailer from '../helpers/mailer.js'
+import mailer from '../helpers/mailer.js'
 import crypto from 'crypto';
-// import SMTP from "../../config/smtp.js";
+import SMTP from "../../config/smtp.js";
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import passport from "passport";
@@ -12,7 +12,7 @@ import responseHelper from '../helpers/responseHelper.js';
 // User Management Page
 export const userPage = async (req, res) => {
     res.render('users/user', {
-        title: 'User management',
+        title: 'User management',   
         page: 'user',
         // user: req.user,
         // currentUserId: req.user._id.toString()
@@ -21,28 +21,28 @@ export const userPage = async (req, res) => {
 
 // User Log In Page
 export const logInPage = async (req, res) => {
-    res.render('user/log_in', {
+    res.render('users/log_in', {
         title: 'Log In'
     })
 }
 
 // User Sign Up Page
 export const signUpPage = async (req, res) => {
-    res.render('user/sign_up', {
+    res.render('users/sign_up', {
         title: 'Sign Up'
     })
 }
 
 // User Forgot Password Page
 export const forgotPasswordPage = async (req, res) => {
-    res.render('user/forgot_password', {
+    res.render('users/forgot_password', {
         title: 'Forgot Password'
     })
 }
 
 // User Reset Password Page
 export const resetPasswordPage = async (req, res) => {
-    res.render('user/reset_password', {
+    res.render('users/reset_password', {
         title: 'Reset Password'
     })
 }
