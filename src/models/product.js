@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 const productSchema = new mongoose.Schema({
+  // material: { type: ObjectId, default: null, ref: "Material" },
+  brand: { type: ObjectId, default: null, ref: "Brand" },
   name: { type: String, default: '' },
   length: { type: Number, default: 0 },
   width: { type: Number, default: 0 },
@@ -11,8 +14,8 @@ const productSchema = new mongoose.Schema({
   front_flare: { type: String, default: '' },
   side_curvature: { type: String, default: '' },
   hand_compatibility: { type: String, default: '' },
-  thumb_rest: {type: Boolean, default: 'true'},
-  ring_finger_rest: {type: Boolean, default: 'true'},
+  thumb_rest: {type: Boolean, default: true},
+  ring_finger_rest: {type: Boolean, default: true},
   material: { type: String, default: '' },
   connectivity: { type: String, default: '' },
   sensor: { type: String, default: '' },

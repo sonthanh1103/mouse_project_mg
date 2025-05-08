@@ -1,14 +1,18 @@
-import Product from '../models/productModel.js';
+import Product from '../models/product.js';
+import responseHelper from "../helpers/responseHelper.js";
 
 // GET all products
-export const getAllProducts = async (req, res) => {
+export const getProducts = async (req, res) => {
   try {
-    const products = await Product.find();
-    res.json({data: products});
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+      const product = await Product.find({});
+      if (!product) {
+        responseHelper.error(res, 'Cannot load product', 400);
+      }
+      responseHelper.success(res, product);
+  } catch (error) {
+      responseHelper.error(res, error.message)
   }
-}
+};
 
 // POST a new product
 export const createProduct = async (req, res) => {
@@ -42,6 +46,7 @@ export const deleteProduct = async (req, res) => {
   }
 }
 
+// DELETE products
 export const delProducts = async (req, res) => {
   try {
       const { productIds } = req.body;

@@ -4,12 +4,15 @@ import cors from 'cors';
 import path from 'path';
 import ejs from 'ejs';
 import { fileURLToPath } from 'url';
+import constants from '../config/constants.js';
 import router from './routes/routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+const port = constants.port;
 
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
@@ -29,7 +32,7 @@ app.use(express.static(path.join(__dirname, '/public')));
 // Khởi động server
 app.use('/', router)
 
-app.listen(3000, () => {
-  console.log('✅ Server running on http://localhost:3000');
+app.listen(port, () => {
+  console.log(`✅ Server running on http://localhost:${port}`);
 });
 

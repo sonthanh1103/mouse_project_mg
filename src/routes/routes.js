@@ -1,6 +1,6 @@
 import express from 'express';
 import userRouters from './users.js';
-import chatBotRoutes from './productRoutes.js';
+import chatBotRoutes from './products.js';
 
 const router = express.Router();
     

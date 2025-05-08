@@ -5,38 +5,67 @@ toastr.options = {
   positionClass: 'toast-top-right'
 };
 
-document.addEventListener('DOMContentLoaded', async () => {
-   getAllProducts()
-   addProduct();
-   updateProduct();
-
-})
-
-
-async function getAllProducts() {
-  try {
-    const response = await fetch('/products');
-    const result = await response.json();
-    if (!response.ok) {
-      toastr.error(result.message)
-      return;
-    }
-
-    const products = result.data;
-    const tbody = document.getElementById('productTableBody');
-    tbody.innerHTML = '';
-    products.forEach(product => {
-     tbody.insertAdjacentHTML('afterbegin', generateRow(product));
-      });
-  } catch (error) {
-    toastr.error( error.message)
-  }
-}
+$(document).ready(function () {
+  $('#productTable').DataTable({
+    order: [],
+    ajax: {
+      url: '/api/product/get',
+      dataSrc: 'data'
+    },
+    scrollX: true,        
+    scrollCollapse: true, 
+    responsive: true,
+    columnDefs: [
+      { targets: '_all', defaultContent: '' }
+    ],  
+    columns: [
+      {
+        data: null,
+        className: 'text-center',
+        render: function (data, type, row) {
+          return `<input type="checkbox" class="productCheckbox row-checkbox" data-id="${row._id}" />`;
+        },
+        orderable: false
+      },
+      { data: 'name' },
+      { data: 'length' },
+      { data: 'width' },
+      { data: 'height' },
+      { data: 'weight' },
+      { data: 'shape' },
+      { data: 'hump_placement' },
+      { data: 'front_flare' },
+      { data: 'side_curvature' },
+      { data: 'hand_compatibility' },
+      { data: 'thumb_rest',
+        render: function(data) {
+          return data === true ? 'Yes' : 'No';
+        }
+       }, 
+      { data: 'ring_finger_rest',
+        render: function(data) {
+          return data === true ? 'Yes' : 'No';
+        }
+       },
+      { data: 'material' },
+      { data: 'connectivity' },
+      { data: 'sensor' },
+      { data: 'sensor_technology' },
+      { data: 'sensor_position' },
+      { data: 'dpi' },
+      { data: 'polling_rate' },
+      { data: 'tracking_speed' },
+      { data: 'acceleration' },
+      { data: 'side_buttons' },
+      { data: 'middle_buttons' }
+    ]
+  });
+});
 
 async function addProduct() {
   document.getElementById('addProductBtn').addEventListener('click', async () => {
       try {
-          const response = await fetch('/create', {
+          const response = await fetch('/api/product/create', {
             method: 'POST',
             headers: {"Content-Type" : "application/json"}
           } );  
@@ -46,7 +75,6 @@ async function addProduct() {
             return;
           }
           toastr.success(result.message)
-          await getAllProducts();
       } catch (error) {
           toastr.error("Create erron: " + error.message);
       }
@@ -70,7 +98,7 @@ function updateProduct() {
       });
 
       try {
-        const response = await fetch(`/update/${id}`, {
+        const response = await fetch(`/api/product/update/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json' 
@@ -115,7 +143,7 @@ async function deleteProducts() {
     if (!confirmDelete) return;
 
     try {
-        const response = await fetch('/delete', {
+        const response = await fetch('/api/product/delete', {
           method: 'POST',
           headers: {"Content-Type" : "application/json"},
           body: JSON.stringify({ productIds: selectedProducts })
