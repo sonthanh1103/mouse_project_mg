@@ -1,16 +1,23 @@
 toastr.options = {
   escapeHtml: false,
   closeButton: true,
-  timeOut: 200,
+  timeOut: 2000,
   positionClass: 'toast-top-right'
 };
 
 $(document).ready(function () {
+  // const renderInput = (field) => (data, type, row) => {
+  //   return `<input type="text"class="form-control dataInput" data-field="${field}" data-id="${row._id}" value="${data}" />`
+  // };
   $('#productTable').DataTable({
     order: [],
     ajax: {
       url: '/api/product/get',
-      dataSrc: 'data'
+      dataSrc: 'data',
+      error: function(xhr, status, error) {
+        console.error('DataTables Ajax error:', status, error);
+        console.error('Server response:', xhr.responseText);
+      }
     },
     scrollX: true,        
     scrollCollapse: true, 
@@ -27,7 +34,15 @@ $(document).ready(function () {
         },
         orderable: false
       },
-      { data: 'name' },
+      { data: null,
+        render: function(data, type, row) { 
+          const brandName = row.brand ? row.brand.name : 'No Brand';
+          return `<div class="product-name-cell">
+                    <div class="brand-name">${brandName}</div>
+                    <div class="model-name">${row.name}</div>
+                  </div>`;
+        }
+       },
       { data: 'length' },
       { data: 'width' },
       { data: 'height' },
@@ -62,138 +77,92 @@ $(document).ready(function () {
   });
 });
 
-async function addProduct() {
-  document.getElementById('addProductBtn').addEventListener('click', async () => {
-      try {
-          const response = await fetch('/api/product/create', {
-            method: 'POST',
-            headers: {"Content-Type" : "application/json"}
-          } );  
-          const result = await response.json();
-          if (!response.ok) {
-            toastr.error(result.message);
-            return;
-          }
-          toastr.success(result.message)
-      } catch (error) {
-          toastr.error("Create erron: " + error.message);
+$('#addProductBtn').on('click', function () {
+  $.ajax({
+    url: '/api/product/create',
+    method: 'POST',
+    contentType: 'application/json',
+    success: function (res) {
+      if (res && res.success) {
+        $('#productTable').DataTable().ajax.reload(null, false);
+        toastr.success(res.message || 'Added successfully');
+      } else {
+        toastr.error(res.message || 'Failed to add');
       }
-  });
-}
-
-
-function updateProduct() {
-  document.getElementById('productTableBody').addEventListener('change', async (event) => {
-    const input = event.target;
-
-    if (input.classList.contains('dataInput')) {
-      const row = input.closest('tr');
-      const id = row.getAttribute('data-id');
-
-      const inputs = row.querySelectorAll('.dataInput');
-      const updatedData = {}; 
-      inputs.forEach(inp => {
-        const field = inp.getAttribute('data-field');
-        updatedData[field] = inp.value; 
-      });
-
-      try {
-        const response = await fetch(`/api/product/update/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json' 
-          },
-          body: JSON.stringify(updatedData)
-        });
-
-        const result = await response.json();
-        if (!response.ok) {
-          toastr.error(result.message);
-          return;
-        }
-
-        console.log('Cập nhật thành công', result);
-      } catch (error) {
-        toastr.error( error.message);
-      }
+    },
+    error: function (xhr) {
+      const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'An error occurred while adding the product';
+      toastr.error(errorMessage);
     }
   });
-}
-
-const selectAll = document.getElementById('selectAll');
-    selectAll.addEventListener('change', () => {
-        const checkboxes = document.querySelectorAll('.productCheckbox');
-        checkboxes.forEach(checkbox => checkbox.checked = selectAll.checked);
-    })
-// selectAll?.addEventListener('change', selectAll);
+});
 
 
-document.getElementById('deleteProductBtn')?.addEventListener('click', deleteProducts);
+$(document).on('change', '.dataInput', function () {
+  const $input = $(this);
+  const id = $input.data('id');
+  const field = $input.data('field');
+  let value = $input.val();
 
-
-async function deleteProducts() {
-    const selectedProducts = [...document.querySelectorAll('.productCheckbox:checked')].map(cb => cb.dataset.id);
-
-    if (selectedProducts.length === 0) {
-        toastr.warning("Please choose at least one product.");
-        return;
+  $.ajax({
+    url: `/api/product/update/${id}`,
+    method: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify({ [field]: value }),
+    success: function (res) {
+      if (res && res.success) {
+        toastr.success(res.message || 'Updated successfully');
+      } else {
+        toastr.error(res.message || 'Update failed');
+      }
+    },
+    error: function (xhr) {
+      const msg = xhr.responseJSON && xhr.responseJSON.message
+        ? xhr.responseJSON.message
+        : 'Error updating product';
+      toastr.error(msg);
     }
+  });
+});
 
-    const confirmDelete = confirm(`Are you sure you want to delete ${selectedProducts.length} product${selectedProducts.length > 1 ? 's' : ''}?`);
-    if (!confirmDelete) return;
 
-    try {
-        const response = await fetch('/api/product/delete', {
-          method: 'POST',
-          headers: {"Content-Type" : "application/json"},
-          body: JSON.stringify({ productIds: selectedProducts })
-        })
+$('#selectAll').on('change', function () {
+  const isChecked = $(this).prop('checked');
+  $('.productCheckbox').prop('checked', isChecked);
+});
 
-        const data = await response.json();
-            if (!response.ok) {
-              toastr.error(data.message);
-              return;
-            }
-            toastr.success(data.message);
-            await getAllProducts();
-            selectAll.checked = false;
-    } catch (error) {
-        toastr.error(error.message);
+$('#deleteProductBtn').on('click', function () {
+  const selectedProducts = $('.productCheckbox:checked').map(function () {
+    return $(this).data('id');
+  }).get();
+
+  if (selectedProducts.length === 0) {
+    toastr.warning('Please choose at least one product.');
+    return;
+  }
+
+  if (!confirm(`Are you sure you want to delete ${selectedProducts.length} product${selectedProducts.length > 1 ? 's':''}`)) return;
+
+  $.ajax({
+    url: '/api/product/delete',
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({ productIds: selectedProducts }),
+    success: function (res) {
+      if (res && res.success) {
+        $('#productTable').DataTable().ajax.reload(null, true);
+        toastr.success(res.message);
+         $('#selectAll').prop('checked', false); 
+      } else {
+        toastr.error(res.message);
+      }
+    },
+    error: function (xhr) {
+      const errorMessage = xhr.responseJSON && xhr.responseJSON.message
+       ? xhr.responseJSON.message : 'An error occurred while processing your request';
+      toastr.error(errorMessage)
     }
-}
+  })
+})
 
-
-
-
-
-function generateRow(product) {
-  return `
-  <tr data-id="${product._id}">
-    <td class="text-center"><input type="checkbox" class="productCheckbox" data-id="${product._id}"/></td>
-    <td><input type="text" class="dataInput" data-field="name" value="${product.name}"/></td>
-    <td><input type="text" class="dataInput" data-field="length" value="${product.length}"/></td>
-    <td><input type="text" class="dataInput" data-field="width" value="${product.width}"/></td>
-    <td><input type="text" class="dataInput" data-field="height" value="${product.height}"/></td>
-    <td><input type="text" class="dataInput" data-field="weight" value="${product.weight}"/></td>
-    <td><input type="text" class="dataInput" data-field="shape" value="${product.shape}"/></td>
-    <td><input type="text" class="dataInput" data-field="hump_placement" value="${product.hump_placement}"/></td>
-    <td><input type="text" class="dataInput" data-field="front_flare" value="${product.front_flare}"/></td>
-    <td><input type="text" class="dataInput" data-field="side_curvature" value="${product.side_curvature}"/></td>
-    <td><input type="text" class="dataInput" data-field="hand_compatibility" value="${product.hand_compatibility}"/></td>
-    <td><input type="text" class="dataInput" data-field="thumb_rest" value="${product.thumb_rest}"/></td>
-    <td><input type="text" class="dataInput" data-field="ring_finger_rest" value="${product.ring_finger_rest}"/></td>
-    <td><input type="text" class="dataInput" data-field="material" value="${product.material}"/></td>
-    <td><input type="text" class="dataInput" data-field="connectivity" value="${product.connectivity}"/></td>
-    <td><input type="text" class="dataInput" data-field="sensor" value="${product.sensor}"/></td>
-    <td><input type="text" class="dataInput" data-field="sensor_technology" value="${product.sensor_technology}"/></td>
-    <td><input type="text" class="dataInput" data-field="sensor_position" value="${product.sensor_position}"/></td>
-    <td><input type="text" class="dataInput" data-field="dpi" value="${product.dpi}"/></td>
-    <td><input type="text" class="dataInput" data-field="polling_rate" value="${product.polling_rate}"/></td>
-    <td><input type="text" class="dataInput" data-field="tracking_speed" value="${product.tracking_speed}"/></td>
-    <td><input type="text" class="dataInput" data-field="acceleration" value="${product.acceleration}"/></td>
-    <td><input type="text" class="dataInput" data-field="side_buttons" value="${product.side_buttons}"/></td>
-    <td><input type="text" class="dataInput" data-field="middle_buttons" value="${product.middle_buttons}"/></td>
-  </tr>
-  `;
-}
 

@@ -1,14 +1,12 @@
 import Product from '../models/product.js';
+import Brand from '../models/brand.js';
 import responseHelper from "../helpers/responseHelper.js";
 
 // GET all products
 export const getProducts = async (req, res) => {
   try {
-      const product = await Product.find({});
-      if (!product) {
-        responseHelper.error(res, 'Cannot load product', 400);
-      }
-      responseHelper.success(res, product);
+      const products = await Product.find().populate('brand', 'name').lean();
+      responseHelper.success(res, products);
   } catch (error) {
       responseHelper.error(res, error.message)
   }
@@ -16,33 +14,22 @@ export const getProducts = async (req, res) => {
 
 // POST a new product
 export const createProduct = async (req, res) => {
-  const newProduct = new Product({});
   try {
+    const newProduct = new Product({});
     await newProduct.save();
-    res.status(201).json({ newProduct, message: 'Added' });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    responseHelper.success(res, '1', 'Added')
+  } catch (error) {
+    responseHelper.error(res, error.message);
   }
 }
-
+  
 // PUT to update an existing product
 export const updateProduct = async (req, res) => {
-  try {
+  try {   
     const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(updatedProduct);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-}
-
-// DELETE a product
-export const deleteProduct = async (req, res) => {
-  try {
-
-    await Product.findByIdAndDelete(req.params.id); 
-    res.json({ message: 'Deleted successfully' });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    responseHelper.success(res, updatedProduct, 'Updated');
+  } catch (error) {
+    responseHelper.error(res, error.message);
   }
 }
 
@@ -51,17 +38,17 @@ export const delProducts = async (req, res) => {
   try {
       const { productIds } = req.body;
       if (!productIds || productIds.length === 0) {
-        return res.status(404).json({ message: 'Please choose at least one product.'})
+        return responseHelper.error(res, 'Please choose at least one product', 400);
       }
       const result = await Product.deleteMany({
           _id: { $in: productIds }
       });
 
       if (result.deletedCount === 0) {
-        return res.status(404).json({message: 'Product Not Found.'})
+        return responseHelper.error(res, 'Product Not Found', 404);
       }
-      res.json({ message: 'Deleted'})
+      responseHelper.success(res, `DelCounts: ${result.deletedCount}` ,'Deleted');
   } catch (error) {
-      res.status(500).json({message: error.message});
+      responseHelper.error(res, error.message);
   }
 };

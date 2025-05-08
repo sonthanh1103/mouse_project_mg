@@ -27,7 +27,12 @@ const productSchema = new mongoose.Schema({
   acceleration: { type: Number, default: 0 },
   side_buttons: { type: Number, default: 0 },
   middle_buttons: { type: Number, default: 0 },
-});
+},
+{
+  collection: "Products", 
+  timestamps: { createdAt: 'createdAt', updatedAt : 'updatedAt'}
+}
+);
 
 const Product = mongoose.model('Product', productSchema);
 export default Product;
