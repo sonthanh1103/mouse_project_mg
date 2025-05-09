@@ -5,7 +5,7 @@ import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import passport from "passport";
 import responseHelper from '../helpers/responseHelper.js';
-
+import { isValidPassword, generateSalt } from '../helpers/common.js';
 
 
 //===================VIEWS==========================
@@ -14,8 +14,8 @@ export const userPage = async (req, res) => {
     res.render('users/user', {
         title: 'User management',   
         page: 'user',
-        // user: req.user,
-        // currentUserId: req.user._id.toString()
+        user: req.user,
+        currentUserId: req.user._id.toString()
     })
 }
 
@@ -134,10 +134,13 @@ export const updateUser = async (req, res) => {
         }
 
         let updatedFields = { username, email };
-        if (password && password === confirmPassword) {
-            const passwordValidation = isValidPassword(password, confirmPassword);
+        if (password) {
+            if (password !== confirmPassword) {
+                return responseHelper.error(res, 'Passwords do not match', 400);
+            }
+            const passwordValidation = isValidPassword(password);
             if (passwordValidation) {
-                return responseHelper.error(res, passwordValidation);
+                return responseHelper.error(res, passwordValidation, 400);
             }
                 const hashedPassword = await bcrypt.hash(password, 10);
                 updatedFields.password = hashedPassword;
@@ -221,14 +224,14 @@ export const forgotPassword = async (req, res) => {
             return responseHelper.error(res, `${email} Not Found.`, 404)
         }
 
-        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetToken = generateSalt(32);
         const tokenExpires = Date.now() + 60 * 60 * 1000; 
 
         user.resetToken = resetToken;
         user.resetTokenExpires = tokenExpires;
         await user.save();
 
-        const resetLink = `http://localhost:3002/reset-password/${resetToken}`;
+        const resetLink = `http://localhost:3003/reset-password/${resetToken}`;
         await mailer.sendMail({
             from: SMTP.username,
             to: user.email,
@@ -272,17 +275,3 @@ export const resetPassword = async (req, res) => {
     }
 }
 
-function isValidPassword(input, confirm = null) {
-    if (
-        input.length < 8 ||
-        !/[A-Z]/.test(input) ||
-        !/\d/.test(input) ||
-        !/[!@#$%^&*(),.?":{}|<>]/.test(input)
-    ) {
-        return 'Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.';
-    }
-    if (confirm && confirm !== input) {
-        return 'Passwords do not correct.';
-    }
-    return null;
-}

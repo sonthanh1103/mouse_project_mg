@@ -1,8 +1,5 @@
-// GET home page
-export const productPage = async (req, res) => {
-        res.render('product/index', {
-        title: 'Trang chủ',
-        page: 'product'
-        });
+export const pageNotFound = async (req, res) => {
+    res.render('errors/error-404', {
+        title: 'Page Not Found'
+    })
 }
-  

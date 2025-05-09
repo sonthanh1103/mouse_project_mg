@@ -2,6 +2,15 @@ import Product from '../models/product.js';
 import Brand from '../models/brand.js';
 import responseHelper from "../helpers/responseHelper.js";
 
+
+// render view
+export const productPage = async (req, res) => {
+  res.render('product/index', {
+  title: 'Product List',
+  page: 'product'
+  });
+}
+
 // GET all products
 export const getProducts = async (req, res) => {
   try {
@@ -27,6 +36,7 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {   
     const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    
     responseHelper.success(res, updatedProduct, 'Updated');
   } catch (error) {
     responseHelper.error(res, error.message);
