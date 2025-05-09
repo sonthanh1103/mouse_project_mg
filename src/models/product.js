@@ -17,7 +17,6 @@ const productSchema = new mongoose.Schema({
   hand_compatibility: { type: String, enum: ['Right', 'Left', 'Ambidextrous'], default: 'Right' },
   thumb_rest: {type: Boolean, default: true},
   ring_finger_rest: {type: Boolean, default: true},
-  material: { type: String, default: '' },
   connectivity: { type: String, enum: ['Wireless', 'Wired'], default: 'Wireless' },
   sensor_technology: { type: String, enum: ['Optical', 'Laser'], default: 'Optical' },
   sensor_position: { type: String, default: '' },

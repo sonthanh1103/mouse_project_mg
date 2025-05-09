@@ -1,5 +1,4 @@
 import Product from '../models/product.js';
-import Brand from '../models/brand.js';
 import responseHelper from "../helpers/responseHelper.js";
 
 
@@ -14,7 +13,14 @@ export const productPage = async (req, res) => {
 // GET all products
 export const getProducts = async (req, res) => {
   try {
-      const products = await Product.find().populate('brand', 'name').lean();
+      const products = await Product.find()
+      .populate([
+        { path: 'brand', select: 'name'},
+        { path: 'material', select: 'name'},
+        { path: 'front_flare', select: 'name'},
+        { path: 'sensor', select: 'name'},
+        { path: 'side_curvature', select: 'name'}  
+      ]).lean();
       responseHelper.success(res, products);
   } catch (error) {
       responseHelper.error(res, error.message)

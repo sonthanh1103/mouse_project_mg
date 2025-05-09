@@ -140,29 +140,3 @@ $('#deleteProductBtn').on('click', function () {
   })
 })
 
-// $(document).on('change', '.dataInput', function () {
-//   const $input = $(this);
-//   const id = $input.data('id');
-//   const field = $input.data('field');
-//   let value = $input.val();
-
-//   $.ajax({
-//     url: `/api/product/update/${id}`,
-//     method: 'PUT',
-//     contentType: 'application/json',
-//     data: JSON.stringify({ [field]: value }),
-//     success: function (res) {
-//       if (res && res.success) {
-//         toastr.success(res.message || 'Updated successfully');
-//       } else {
-//         toastr.error(res.message || 'Update failed');
-//       }
-//     },
-//     error: function (xhr) {
-//       const msg = xhr.responseJSON && xhr.responseJSON.message
-//         ? xhr.responseJSON.message
-//         : 'Error updating product';
-//       toastr.error(msg);
-//     }
-//   });
-// });
