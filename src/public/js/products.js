@@ -6,9 +6,9 @@ toastr.options = {
 };
 
 $(document).ready(function () {
-  // const renderInput = (field) => (data, type, row) => {
-  //   return `<input type="text"class="form-control dataInput" data-field="${field}" data-id="${row._id}" value="${data}" />`
-  // };
+  const renderInput = (field) => (data, type, row) => {
+    return `<input type="text"class="form-control dataInput" data-field="${field}" data-id="${row._id}" value="${data}" />`
+  };
   $('#productTable').DataTable({
     order: [],
     ajax: {
@@ -38,12 +38,16 @@ $(document).ready(function () {
         render: function(data, type, row) { 
           const brandName = row.brand ? row.brand.name : 'No Brand';
           return `<div class="product-name-cell">
-                    <div class="brand-name">${brandName}</div>
+                    <select>
+                      <option>${brandName}</option>
+                    </select>
                     <div class="model-name">${row.name}</div>
                   </div>`;
         }
        },
-      { data: 'length' },
+      { data: 'length',
+        render: renderInput('length')
+       },
       { data: 'width' },
       { data: 'height' },
       { data: 'weight' },
@@ -97,35 +101,6 @@ $('#addProductBtn').on('click', function () {
   });
 });
 
-
-$(document).on('change', '.dataInput', function () {
-  const $input = $(this);
-  const id = $input.data('id');
-  const field = $input.data('field');
-  let value = $input.val();
-
-  $.ajax({
-    url: `/api/product/update/${id}`,
-    method: 'PUT',
-    contentType: 'application/json',
-    data: JSON.stringify({ [field]: value }),
-    success: function (res) {
-      if (res && res.success) {
-        toastr.success(res.message || 'Updated successfully');
-      } else {
-        toastr.error(res.message || 'Update failed');
-      }
-    },
-    error: function (xhr) {
-      const msg = xhr.responseJSON && xhr.responseJSON.message
-        ? xhr.responseJSON.message
-        : 'Error updating product';
-      toastr.error(msg);
-    }
-  });
-});
-
-
 $('#selectAll').on('change', function () {
   const isChecked = $(this).prop('checked');
   $('.productCheckbox').prop('checked', isChecked);
@@ -135,14 +110,14 @@ $('#deleteProductBtn').on('click', function () {
   const selectedProducts = $('.productCheckbox:checked').map(function () {
     return $(this).data('id');
   }).get();
-
+  
   if (selectedProducts.length === 0) {
     toastr.warning('Please choose at least one product.');
     return;
   }
-
+  
   if (!confirm(`Are you sure you want to delete ${selectedProducts.length} product${selectedProducts.length > 1 ? 's':''}`)) return;
-
+  
   $.ajax({
     url: '/api/product/delete',
     method: 'POST',
@@ -152,17 +127,42 @@ $('#deleteProductBtn').on('click', function () {
       if (res && res.success) {
         $('#productTable').DataTable().ajax.reload(null, true);
         toastr.success(res.message);
-         $('#selectAll').prop('checked', false); 
+        $('#selectAll').prop('checked', false); 
       } else {
         toastr.error(res.message);
       }
     },
     error: function (xhr) {
       const errorMessage = xhr.responseJSON && xhr.responseJSON.message
-       ? xhr.responseJSON.message : 'An error occurred while processing your request';
+      ? xhr.responseJSON.message : 'An error occurred while processing your request';
       toastr.error(errorMessage)
     }
   })
 })
 
+// $(document).on('change', '.dataInput', function () {
+//   const $input = $(this);
+//   const id = $input.data('id');
+//   const field = $input.data('field');
+//   let value = $input.val();
 
+//   $.ajax({
+//     url: `/api/product/update/${id}`,
+//     method: 'PUT',
+//     contentType: 'application/json',
+//     data: JSON.stringify({ [field]: value }),
+//     success: function (res) {
+//       if (res && res.success) {
+//         toastr.success(res.message || 'Updated successfully');
+//       } else {
+//         toastr.error(res.message || 'Update failed');
+//       }
+//     },
+//     error: function (xhr) {
+//       const msg = xhr.responseJSON && xhr.responseJSON.message
+//         ? xhr.responseJSON.message
+//         : 'Error updating product';
+//       toastr.error(msg);
+//     }
+//   });
+// });

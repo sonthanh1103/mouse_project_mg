@@ -246,13 +246,19 @@ if (logInForm) {
                         toastr.warning(isValidUser);
                         return;
                     }
-                    if (password.length !== 0 || confirmPassword.length !== 0) {
+                    if ((password && !confirmPassword) || (!password && confirmPassword)) {
+                        toastr.warning('Please fill out this field.');
+                        (password ? document.getElementById('new-confirm-password') : document.getElementById('new-password')).focus();
+                        return;
+                    }
+
+                     if (password && confirmPassword) {
                         if (!isValidPassword(password)) {
                             toastr.warning("Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.");
                             return;
                         }
-                        if (!isValidPassword(password, confirmPassword)) {
-                            toastr.warning('Passwords do not match.')
+                        if (password !== confirmPassword) {
+                            toastr.warning('Passwords do not match.');
                             return;
                         }
                         dataUpdate.password = password;
@@ -337,5 +343,3 @@ function renderTable(users = []) {
         </tr>`
     ).join('');
 }
-
-//CLEAR FORM (CREATE USER FORM)

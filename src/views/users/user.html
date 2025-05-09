@@ -2,12 +2,12 @@
 
     <div class="container mt-5">  
           <%- include('../partials/navbar.html') %>
-          <h2 class="t_center fw-bold">USER LIST</h2>
+          <h2 class="t_center fw-bold mt80">USER LIST</h2>
     
           <div class="d-flex justify-content-between align-items-center mb-3">
             <form class="search-form d-flex" id="search-form">
               <input type="text" id="searchById" class="form-control me-2" placeholder="Search" />
-              <button class="btn btn-outline-primary" id="searchByIdBtn">Search</button>
+              <button type="submit" class="btn btn-outline-primary" id="searchByIdBtn">Search</button>
             </form>
     
             <div class="action-btn-group">
@@ -107,5 +107,8 @@
         </div>
 
   <%- include('../partials/commonjs.html') %>
+  <script>
+    const currentUserId = '<%= currentUserId %>';
+  </script>
   <script src="/js/users.js"></script>
   <%- include('../partials/footer.html') %>
