@@ -1,12 +1,11 @@
 import mongoose from 'mongoose';
-import { ObjectId } from 'mongodb';
 
 const productSchema = new mongoose.Schema({
-  material: { type: ObjectId, default: null, ref: "Material" },
-  brand: { type: ObjectId, default: null, ref: "Brand" },
-  front_flare: { type: ObjectId, default: null, ref: 'FrontFlare' },
-  side_curvature: { type: ObjectId, default: null, ref: 'SideCurvature' },
-  sensor: { type: ObjectId, default: null, ref: 'Sensor' },
+  material: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Material" },
+  brand: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Brand" },
+  front_flare: { type: mongoose.Schema.Types.ObjectId, default: null, ref: 'FrontFlare' },
+  side_curvature: { type: mongoose.Schema.Types.ObjectId, default: null, ref: 'SideCurvature' },
+  sensor: { type: mongoose.Schema.Types.ObjectId, default: null, ref: 'Sensor' },
   name: { type: String, default: '' },
   length: { type: Number, default: 0 },
   width: { type: Number, default: 0 },

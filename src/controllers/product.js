@@ -1,4 +1,4 @@
-import Product from '../models/product.js';
+import { Product } from '../models/index.js';
 import responseHelper from "../helpers/responseHelper.js";
 
 
@@ -13,15 +13,14 @@ export const productPage = async (req, res) => {
 // GET all products
 export const getProducts = async (req, res) => {
   try {
-      const products = await Product.find()
-      .populate([
-        { path: 'brand', select: 'name'},
-        { path: 'material', select: 'name'},
-        { path: 'front_flare', select: 'name'},
-        { path: 'sensor', select: 'name'},
-        { path: 'side_curvature', select: 'name'}  
-      ]).lean();
-      responseHelper.success(res, products);
+      const products = await Product.find({})
+        .populate('material')
+        .populate('front_flare')
+        .populate('side_curvature')
+        .populate('sensor')
+        .populate('brand')
+        .lean();
+        responseHelper.success(res, products);
   } catch (error) {
       responseHelper.error(res, error.message)
   }
@@ -30,19 +29,43 @@ export const getProducts = async (req, res) => {
 // POST a new product
 export const createProduct = async (req, res) => {
   try {
-    const newProduct = new Product({});
+    const newProduct = new Product(req.body);
     await newProduct.save();
-    responseHelper.success(res, '1', 'Added')
+
+    const saved = await Product.findById(newProduct._id)
+    .populate('material', 'name')
+    .populate('front_flare')
+    .populate('side_curvature')
+    .populate('sensor')
+    .populate('brand')
+    .lean();
+
+  responseHelper.success(res, saved, 'Added');
   } catch (error) {
     responseHelper.error(res, error.message);
   }
 }
-  
+
 // PUT to update an existing product
 export const updateProduct = async (req, res) => {
-  try {   
-    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    
+  try {
+    // const { id } = req.params;
+    // const { name } = req.body;
+    // const nameExist = await Product.findOne({
+    //   name,
+    //   _id: { $ne: id }
+    // })
+
+    // if (nameExist) {
+    //   return responseHelper.error(res, `Product ${name} already exist.`, 400);
+    // }
+
+    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true })
+      .populate('material')
+      .populate('front_flare')
+      .populate('side_curvature')
+      .populate('sensor')
+      .populate('brand');
     responseHelper.success(res, updatedProduct, 'Updated');
   } catch (error) {
     responseHelper.error(res, error.message);
