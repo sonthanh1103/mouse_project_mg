@@ -216,6 +216,7 @@ $(document).ready(function() {
 
   // add
   $('#addProductBtn').on('click', function () {
+    
     const defaultProductData = {
     brand: lookup.brand.length > 0 ? lookup.brand[0]._id : null,
     material: lookup.material.length > 0 ? lookup.material[0]._id : null,
@@ -238,6 +239,7 @@ $(document).ready(function() {
         }
       },
       error: function (xhr) {
+        console.log(xhr)
         const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'An error occurred while adding the product';
         toastr.error(errorMessage);
       }
