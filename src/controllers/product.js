@@ -43,7 +43,7 @@ export const updateProduct = async (req, res) => {
     const { id } = req.params;
 
     const existing = await Product.findById(id).lean();
-    if (!existing) return responseHelper.error(res, 'Not found', 404);
+    if (!existing) return responseHelper.error(res, 'Product Not found', 404);
 
     const nameToCheck  = req.body.name  ?? existing.name;
     const brandToCheck = req.body.brand ?? existing.brand;
