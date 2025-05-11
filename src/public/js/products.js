@@ -1,6 +1,6 @@
 // public/js/products.js
 
-$(document).ready(function() {
+$(function() {
   // Enum and boolean fields config
   const enumFields = {
     shape: ['Symmetrical','Ergonomic','Hybrid'],
@@ -11,15 +11,17 @@ $(document).ready(function() {
     connectivity: ['Wireless','Wired'],
     sensor_technology: ['Optical','Laser']
   };
+  // Ref and number fields
+  const refFields = new Set(['material','brand', 'front_flare', 'side_curvature', 'sensor']);
+  const numFields = new Set(['length','width','height','weight','dpi','polling_rate','tracking_speed','acceleration','side_buttons','middle_buttons']);
 
-  const refFields = ['material','brand', 'front_flare', 'side_curvature', 'sensor'];
-
-  // 2) Initialize DataTable with proper column order
+  // initial DataTable
   const table = $('#productTable').DataTable({
     order: [],
     ajax: { 
     url: '/api/product/get',
-    dataSrc: 'data' },
+    dataSrc: 'data' 
+    },
     scrollX: true,        
     scrollCollapse: true, 
     responsive: true,
@@ -72,7 +74,7 @@ $(document).ready(function() {
     ]
   });
 
-  // 3) Gather lookup lists from populate data
+  // lookup data
  let lookup = {};
 
   $.get('/api/product/lookup', function (res) {
@@ -85,7 +87,7 @@ $(document).ready(function() {
   });
 
 
-  // 4) Inline edit logic
+  // inline edit
   $('#productTable tbody').on('click', '.cell', function() {
     const $span = $(this);
     if ($span.data('editing')) return;
@@ -94,7 +96,7 @@ $(document).ready(function() {
     const oldVal = $span.data('value');
     $span.data('editing', true);
 
-    // Special handling for Name column (brand + name)
+    // handle (brand + name)
     if (field === 'brand' || field === 'name') {
       const $container = $span.closest('.product-name-cell');
       const bVal = $container.find('.cell-brand').data('value');
@@ -112,7 +114,9 @@ $(document).ready(function() {
 
       // Handlers
       $brandSel.on('change', function() {
-        updateField(id, 'brand', this.value, () => table.ajax.reload(null, false));
+        const newBrand = this.value;
+        const newName  = $container.find('.cell-name').data('value');
+        updateField(id, { brand: newBrand, name: newName }, () => table.ajax.reload(null, false));
       });
       $nameInput.on('blur keydown', function(e) {
         if (e.type === 'keydown' && e.which !== 13) return;
@@ -126,15 +130,13 @@ $(document).ready(function() {
           .append(`<span class="cell cell-name"  data-field="name"  data-id="${id}" data-value="${newName}">${newName || '&nbsp;'}</span>`);
 
         if (newName !== nVal) {
-          updateField(id, 'name', newName, () => {
-            table.order(table.order()).draw();
-          });
+            updateField(id, { brand: selectedBrandId, name: newName }, () => () => table.ajax.reload(null, false));
         }
       });
       return;
     }
 
-    // General fields
+    // general fields
     let $editor;
     if (enumFields[field]) {
       $editor = $('<select class="cell-editor form-select form-select-sm"></select>');
@@ -142,15 +144,14 @@ $(document).ready(function() {
         const sel = opt === oldVal ? 'selected' : '';
         $editor.append(`<option value="${opt}" ${sel}>${opt}</option>`);
       });
-    } else if (refFields.includes(field)) {
+    } else if (refFields.has(field)) {
       $editor = $('<select class="cell-editor form-select form-select-sm"></select>');
       lookup[field].forEach(opt => {
         const sel = opt._id === oldVal ? 'selected' : '';
         $editor.append(`<option value="${opt._id}" ${sel}>${opt.name}</option>`);
       });
-    }else {
-      const numFields = ['length','width','height','weight','dpi','polling_rate','tracking_speed','acceleration','side_buttons','middle_buttons'];
-      const type = numFields.includes(field) ? 'number' : 'text';
+    } else {
+      const type = numFields.has(field) ? 'number' : 'text';
       $editor = $(`<input type="${type}" class="cell-editor form-control form-control-sm" value="${oldVal}">`);
     }
     $span.empty().append($editor);  
@@ -169,11 +170,12 @@ $(document).ready(function() {
         finish(oldVal);
       }
     });
+
     function finish(val) {
       let disp = val;
       if (enumFields[field]) disp = val;
       else if (typeof val === 'boolean') disp = val ? 'Yes' : 'No';
-      else if (refFields.includes(field)) {
+      else if (refFields.has(field)) {
         const obj = lookup[field].find(o => o._id === val);
         disp = obj ? obj.name : '&nbsp;';
       } else {
@@ -183,26 +185,31 @@ $(document).ready(function() {
     }
   });
 
-  // Helper AJAX update
-  function updateField(id, field, value, cb) {
+  // update
+  function updateField(id, fields, cb) {
     const booleanFields = ['thumb_rest', 'ring_finger_rest'];
     const payload = {};
 
-    if (booleanFields.includes(field)) {
-      if (value === 'Yes') payload[field] = true;
-      else if (value === 'No') payload[field] = false;
-      else payload[field] = value;
-    } else if (value === '' && ['brand','material','front_flare','side_curvature','sensor'].includes(field)) {
-      payload[field] = null;
-    } else {
-      payload[field] = value;
-    }
+    Object.entries(fields).forEach(([f, v]) => {
+      if (booleanFields.includes(f)) {
+        payload[f] = (v === 'Yes');
+      } else if (refFields.has(f) && (v === '' || v === null)) {
+        payload[f] = null;
+      } else {
+        payload[f] = v;
+      }
+    })
     $.ajax({ url: `/api/product/update/${id}`,
       method: 'PUT', 
       contentType: 'application/json', 
       data: JSON.stringify(payload), 
       success: function (res) {
-        toastr.success(res.message);
+        if (res.success) {
+          toastr.success(res.message);
+          cb && cb();
+        } else {
+          toastr.error(res.message);
+        }
       }, 
       error: (xhr) => {
         const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Update error';
@@ -285,7 +292,7 @@ $(document).ready(function() {
   });
 })
 
-// renderCell
+// render Cells
 function renderCell(field) {
   return (value, type, row) => {
     const v = value && value._id ? value._id : (value != null ? value : '');
