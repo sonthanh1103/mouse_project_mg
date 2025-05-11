@@ -10,7 +10,15 @@ export const materialPage = (req, res) => {
 
 export const getMaterials = async (req, res) => {
     try {
-        const materials = await Material.find();
+        const { s } = req.query;
+        const filter = {};
+        if (s) {
+            filter["$or"] = [
+                { name: { $regex: s, $options: 'i' }},
+                { description: { $regex: s, $options: 'i' }}
+            ]
+        }
+        const materials = await Material.find(filter);
         responseHelper.success(res, materials)
     } catch (error) {
         responseHelper.error(res, error.message);
@@ -49,9 +57,9 @@ export const updateMaterial = async (req, res) => {
 
 export const deleteMaterials = async (req, res) => {
     try {
-        const { selectedMaterials } = req.body;
+        const { materialIds } = req.body;
         const result = await Material.deleteMany({
-            _id: { $in: selectedMaterials }
+            _id: { $in: materialIds }
         })
         responseHelper.success(res, result.deletedCount, 'Deleted');
     } catch (error) {

@@ -1,36 +1,35 @@
 $(function () {
   // get all data
-  function getBrands(s = '') {
-     const query = s ? `?s=${encodeURIComponent(s)}` : '';
-    $.get(`/api/brand/get${query}`, function (response) {
-      $('#brandTableBody').empty(); 
-      response.data.forEach(brand => {
-        $('#brandTableBody').prepend(generateRow(brand));
+  function getSensors(s = '') {
+    const query = s ? `?s=${encodeURIComponent(s)}` : '';
+    $.get(`/api/sensor/get${query}`, function (response) {
+      $('#sensorTableBody').empty(); 
+      response.data.forEach(sensor => {
+        $('#sensorTableBody').prepend(generateRow(sensor));
       });
       $('.dataInput').prop('readonly', false); 
     });
   }
-
-    //get (s) from query
+  
+  // get (s) from query
   $('#search-form').on('submit', function (e) {
     e.preventDefault();
-    const s = $('#brandSearchInput').val().trim();
-    getBrands(s);
+    const s = $('#searchSensorInput').val().trim();
+    getSensors(s);
   })
   
-  // initial load
-  getBrands();
-  
+  getSensors();
+
   // add
-    $('#addBrandBtn').on('click', function () {
+    $('#addSensorBtn').on('click', function () {
         $.ajax({
-            url: '/api/brand/create',
+            url: '/api/sensor/create',
             method: 'POST',
             contentType: 'application/json',
             success: function (res) {
                 if (res) {
                     toastr.success(res.message)
-                    getBrands();
+                    getSensors();
                 } else {
                     toastr.error(res.message);
                 }
@@ -53,7 +52,7 @@ $(function () {
     let updateData = { name, description };
 
     $.ajax({
-      url: `/api/brand/update/${id}`,
+      url: `/api/sensor/update/${id}`,
       method: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify( updateData ),
@@ -72,45 +71,45 @@ $(function () {
 
   // select all checkbox
   $('#selectAll').on('change', function () {
-    $('.brandCheckbox').prop('checked', $(this).prop('checked'));
+    $('.sensorCheckbox').prop('checked', $(this).prop('checked'));
   });
   
   // delete
-  $('#deleteBrandBtn').on('click', function () {
-    const selectedBrands = $('.brandCheckbox:checked').map(function () {
+  $('#deleteSensorBtn').on('click', function () {
+    const selectedSensors = $('.sensorCheckbox:checked').map(function () {
       return $(this).data('id');
     }).get();
   
-    if (selectedBrands.length === 0) {
-      toastr.warning("Please choose at least one brand.");
+    if (selectedSensors.length === 0) {
+      toastr.warning("Please choose at least one sensor.");
       return;
     }
   
-     if(!confirm(`Are you sure you want to delete ${selectedBrands.length} brand${selectedBrands.length > 1 ? 's' : ''}?`)) return;
+     if(!confirm(`Are you sure you want to delete ${selectedSensors.length} sensor${selectedSensors.length > 1 ? 's' : ''}?`)) return;
   
     $.ajax({
-      url: '/api/brand/delete',
+      url: '/api/sensor/delete',
       method: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify({ brandIds: selectedBrands }),
+      data: JSON.stringify({ sensorIds: selectedSensors }),
       success: function (res) {
         toastr.success(res.message)
-        getBrands();
+        getSensors();
         $('#selectAll').prop('checked', false);
       },
       error: function (error) {
-        toastr.error(error)
+        toastr.error(error.responseJSON?.message || "Delete failed")
       }
     });
   });
 });
 
-function generateRow(brand) {
+function generateRow(sensor) {
   return `
-    <tr data-id="${brand._id}">
-      <td class="t_center"><input type="checkbox" class="brandCheckbox" data-id="${brand._id}"></td>
-      <td><input type="text" class="dataInput border-0" style="width:100%" data-field="name" value="${brand.name}" /></td>
-      <td><input type="text" class="dataInput border-0" style="width:100%" data-field="description" value="${brand.description}" /></td>
+    <tr data-id="${sensor._id}">
+      <td class="t_center"><input type="checkbox" class="sensorCheckbox" data-id="${sensor._id}"></td>
+      <td><input type="text" class="dataInput border-0" style="width:100%" data-field="name" value="${sensor.name}" /></td>
+      <td><input type="text" class="dataInput border-0" style="width:100%" data-field="description" value="${sensor.description}" /></td>
     </tr>
   `;
 }

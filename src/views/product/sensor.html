@@ -5,30 +5,29 @@
     
           <div class="d-flex justify-content-between align-items-center mb-3">
             <form class="search-form d-flex" id="search-form">
-              <input type="text" id="searchById" class="form-control me-2" placeholder="Search" />
-              <button type="submit" class="btn btn-outline-primary" id="searchByIdBtn">Search</button>
+              <input type="text" id="searchSensorInput" class="form-control me-2" placeholder="Search" />
+              <button type="submit" class="btn btn-outline-primary" id="searchSensorBtn">Search</button>
             </form>
     
             <div class="action-btn-group">
-              <button class="btn btn-outline-secondary" id="deleteManyBtn">Delete</button>
-              <button class="btn btn-outline-success" id="newUser">Add User</button>
+              <button class="btn btn-outline-secondary" id="deleteSensorBtn">Delete</button>
+              <button class="btn btn-outline-success" id="addSensorBtn">Add Sensor</button>
             </div>
           </div>
     
-          <table id="userTable" class="table table-bordered">
+          <table id="sensorTable" class="table table-bordered">
             <thead class="table-dark">
               <tr>
                 <th class="t_center"><input type="checkbox" id="selectAll"></th>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Created At</th>
-                <th>Updated At</th>
               </tr>
             </thead>
-            <tbody id="userTableBody">
+            <tbody id="sensorTableBody">
               <!-- data inserted here -->
             </tbody>
           </table>
     </div>
 <%- include('../partials/commonjs.html')%>
+<script src="/js/sensors.js"></script
 <%- include('../partials/footer.html')%>

@@ -5,9 +5,13 @@ import * as materialController from '../controllers/material.js';
 import * as frontFlareController from '../controllers/frontFlare.js';
 import * as sideCurvatureController from '../controllers/sideCurvature.js';
 import * as sensorController from '../controllers/sensor.js';
+import * as lookupController from '../controllers/lookupController.js';
 import isAuthenticated from '../helpers/isAuthenticated.js';
 
 const router = express.Router();
+
+// general
+router.get('/api/product/lookup', lookupController.getProductLookUp);
 
 // product
 router.get('/product',                  isAuthenticated, productController.productPage)    // render view Product Page

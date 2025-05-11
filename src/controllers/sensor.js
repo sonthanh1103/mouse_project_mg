@@ -10,7 +10,15 @@ export const sensorPage = (req, res) => {
 
 export const getSensors = async (req, res) => {
     try {
-        const sensors = await Sensor.find();
+        const { s } = req.query;
+        const filter = {};
+        if (s) {
+            filter["$or"] = [
+                { name: { $regex: s, $options: 'i' }},
+                { description: { $regex: s, $options: 'i' }}
+            ]
+        }
+        const sensors = await Sensor.find(filter);
         responseHelper.success(res, sensors)
     } catch (error) {
         responseHelper.error(res, error.message);
@@ -49,9 +57,9 @@ export const updateSensor = async (req, res) => {
 
 export const deleteSensors = async (req, res) => {
     try {
-        const { selectedSensors } = req.body;
+        const { sensorIds } = req.body;
         const result = await Sensor.deleteMany({
-            _id: { $in: selectedSensors }
+            _id: { $in: sensorIds }
         })
         responseHelper.success(res, result.deletedCount, 'Deleted');
     } catch (error) {

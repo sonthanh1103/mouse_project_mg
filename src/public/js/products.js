@@ -14,16 +14,17 @@ $(document).ready(function() {
 
   const refFields = ['material','brand', 'front_flare', 'side_curvature', 'sensor'];
 
-
   // 2) Initialize DataTable with proper column order
   const table = $('#productTable').DataTable({
     order: [],
-    ajax: { url: '/api/product/get', dataSrc: 'data' },
+    ajax: { 
+    url: '/api/product/get',
+    dataSrc: 'data' },
     scrollX: true,        
     scrollCollapse: true, 
     responsive: true,
     columns: [
-      // 1. Checkbox
+      // checkbox
       {
         data: null,
         orderable: false,
@@ -32,7 +33,7 @@ $(document).ready(function() {
           return `<input type="checkbox" class="productCheckbox" data-id="${row._id}">`
         }
       },
-      // 2. Name column: brand + name inline
+      // Name column: brand + name inline
       {
         data: null,
         render: (data, type, row) => {
@@ -72,21 +73,17 @@ $(document).ready(function() {
   });
 
   // 3) Gather lookup lists from populate data
-  let lookup = { brand: [], material: [], front_flare: [], side_curvature: [], sensor: [] };
-  table.on('xhr', () => {
-    const data = table.ajax.json().data;
-    lookup = { brand: [], material: [], front_flare: [], side_curvature: [], sensor: [] };
-    data.forEach(r => {
-      if (r.brand) lookup.brand.push(r.brand);
-      if (r.material) lookup.material.push(r.material);
-      if (r.front_flare) lookup.front_flare.push(r.front_flare);
-      if (r.side_curvature) lookup.side_curvature.push(r.side_curvature);
-      if (r.sensor) lookup.sensor.push(r.sensor);
-    });
-    Object.keys(lookup).forEach(k => {
-      lookup[k] = lookup[k].filter((o, i, a) => a.findIndex(x => x._id === o._id) === i);
-    });
+ let lookup = {};
+
+  $.get('/api/product/lookup', function (res) {
+    if (res.success) {
+      lookup = res.data;
+      $('#addProductBtn').prop('disabled', false);
+    } else {
+      toastr.error('Không lấy được dữ liệu tham chiếu');
+    }
   });
+
 
   // 4) Inline edit logic
   $('#productTable tbody').on('click', '.cell', function() {
@@ -288,7 +285,7 @@ $(document).ready(function() {
   });
 })
 
-// Helper renderCell function
+// renderCell
 function renderCell(field) {
   return (value, type, row) => {
     const v = value && value._id ? value._id : (value != null ? value : '');

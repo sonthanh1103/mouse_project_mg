@@ -10,7 +10,15 @@ export const frontFlarePage = (req, res) => {
 
 export const getFrontFlares = async (req, res) => {
     try {
-        const frontFlare = await FrontFlare.find();
+        const { s } = req.query;
+        const filter = {};
+        if (s) {
+            filter["$or"] = [
+                { name: { $regex: s, $options: 'i' }},
+                { description: { $regex: s, $options: 'i' }}
+            ]
+        }
+        const frontFlare = await FrontFlare.find(filter);
         responseHelper.success(res, frontFlare)
     } catch (error) {
         responseHelper.error(res, error.message);
@@ -49,9 +57,9 @@ export const updateFrontFlare = async (req, res) => {
 
 export const deleteFrontFlares = async (req, res) => {
     try {
-        const { selectedFrontFlares } = req.body;
+        const { frontFlareIds } = req.body;
         const result = await FrontFlare.deleteMany({
-            _id: { $in: selectedFrontFlares }
+            _id: { $in: frontFlareIds }
         })
         responseHelper.success(res, result.deletedCount, 'Deleted');
     } catch (error) {

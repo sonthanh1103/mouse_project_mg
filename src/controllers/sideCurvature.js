@@ -10,7 +10,15 @@ export const sideCurvaturePage = (req, res) => {
 
 export const getSideCurvatures = async (req, res) => {
     try {
-        const sideCurvatures = await SideCurvature.find();
+        const { s } = req.query;
+        const filter = {};
+         if (s) {
+            filter["$or"] = [
+                { name: { $regex: s, $options: 'i' }},
+                { description: { $regex: s, $options: 'i' }}
+            ]
+        }
+        const sideCurvatures = await SideCurvature.find(filter);
         responseHelper.success(res, sideCurvatures)
     } catch (error) {
         responseHelper.error(res, error.message);
@@ -49,9 +57,9 @@ export const updateSideCurvature = async (req, res) => {
 
 export const deleteSideCurvatures = async (req, res) => {
     try {
-        const { selectedSideCurvatures } = req.body;
+        const { sideCurvatureIds } = req.body;
         const result = await SideCurvature.deleteMany({
-            _id: { $in: selectedSideCurvatures }
+            _id: { $in: sideCurvatureIds }
         })
         responseHelper.success(res, result.deletedCount, 'Deleted');
     } catch (error) {
