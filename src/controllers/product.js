@@ -15,7 +15,8 @@ export const getProducts = async (req, res) => {
   try {
       const products = await Product.find({})
         .populate('material brand front_flare side_curvature sensor')
-        .lean();
+        .lean()
+        .sort({ createdAt: -1 });
       responseHelper.success(res, products);
   } catch (error) {
       responseHelper.error(res, error.message)

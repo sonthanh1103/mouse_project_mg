@@ -237,7 +237,7 @@ $(function() {
           toastr.error(res.message || 'Failed to add');
           return;
         } 
-        table.row.add(res.data).draw(false);
+        table.ajax.reload(null, true);
         toastr.success(res.message || 'Added successfully');
       },
       error: function (xhr) {
@@ -274,7 +274,7 @@ $(function() {
       data: JSON.stringify({ productIds: selectedProducts }),
       success: function (res) {
         if (res.success) {
-          $('#productTable').DataTable().ajax.reload(null, true);
+          table.ajax.reload(null, true);
           toastr.success(res.message);
           $('#selectAll').prop('checked', false); 
         } else {
