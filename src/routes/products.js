@@ -11,7 +11,7 @@ import isAuthenticated from '../helpers/isAuthenticated.js';
 const router = express.Router();
 
 // general
-router.get('/api/product/lookup', lookupController.getProductLookUp);
+router.get('/api/product/lookup', lookupController.getProductLookUp); // get all ref fields data
 
 // product
 router.get('/product',                  isAuthenticated, productController.productPage)    // render view Product Page
@@ -28,31 +28,31 @@ router.put('/api/brand/update/:id',     isAuthenticated, brandController.updateB
 router.post('/api/brand/delete',        isAuthenticated, brandController.deleteBrands);
 
 // material
-router.get('/material',                     materialController.materialPage);
-router.get('/api/material/get',             materialController.getMaterials);
-router.post('/api/material/create',          materialController.createMaterial);
-router.put('/api/material/update/:id',      materialController.updateMaterial);
-router.post('/api/material/delete',          materialController.deleteMaterials);
+router.get('/material',                     isAuthenticated, materialController.materialPage);
+router.get('/api/material/get',             isAuthenticated, materialController.getMaterials);
+router.post('/api/material/create',         isAuthenticated, materialController.createMaterial);
+router.put('/api/material/update/:id',      isAuthenticated, materialController.updateMaterial);
+router.post('/api/material/delete',         isAuthenticated, materialController.deleteMaterials);
 
 // front_flare
-router.get('/front-flare',                  frontFlareController.frontFlarePage);
-router.get('/api/front-flare/get',          frontFlareController.getFrontFlares);
-router.post('/api/front-flare/create',       frontFlareController.createFrontFlare);
-router.put('/api/front-flare/update/:id',   frontFlareController.updateFrontFlare);
-router.post('/api/front-flare/delete',       frontFlareController.deleteFrontFlares);
+router.get('/front-flare',                  isAuthenticated, frontFlareController.frontFlarePage);
+router.get('/api/front-flare/get',          isAuthenticated, frontFlareController.getFrontFlares);
+router.post('/api/front-flare/create',      isAuthenticated, frontFlareController.createFrontFlare);
+router.put('/api/front-flare/update/:id',   isAuthenticated, frontFlareController.updateFrontFlare);
+router.post('/api/front-flare/delete',      isAuthenticated, frontFlareController.deleteFrontFlares);
 
 // side_curvature
-router.get('/side-curvature',                   sideCurvatureController.sideCurvaturePage);
-router.get('/api/side-curvature/get',           sideCurvatureController.getSideCurvatures);
-router.post('/api/side-curvature/create',        sideCurvatureController.createSideCurvature);
-router.put('/api/side-curvature/update/:id',    sideCurvatureController.updateSideCurvature);
-router.post('/api/side-curvature/delete',        sideCurvatureController.deleteSideCurvatures);
+router.get('/side-curvature',                   isAuthenticated, sideCurvatureController.sideCurvaturePage);
+router.get('/api/side-curvature/get',           isAuthenticated, sideCurvatureController.getSideCurvatures);
+router.post('/api/side-curvature/create',       isAuthenticated, sideCurvatureController.createSideCurvature);
+router.put('/api/side-curvature/update/:id',    isAuthenticated, sideCurvatureController.updateSideCurvature);
+router.post('/api/side-curvature/delete',       isAuthenticated, sideCurvatureController.deleteSideCurvatures);
 
 // sensor
-router.get('/sensor',                   sensorController.sensorPage);
-router.get('/api/sensor/get',           sensorController.getSensors);
-router.post('/api/sensor/create',        sensorController.createSensor);
-router.put('/api/sensor/update/:id',    sensorController.updateSensor);
-router.post('/api/sensor/delete',        sensorController.deleteSensors);
+router.get('/sensor',                   isAuthenticated, sensorController.sensorPage);
+router.get('/api/sensor/get',           isAuthenticated, sensorController.getSensors);
+router.post('/api/sensor/create',       isAuthenticated, sensorController.createSensor);
+router.put('/api/sensor/update/:id',    isAuthenticated, sensorController.updateSensor);
+router.post('/api/sensor/delete',       isAuthenticated, sensorController.deleteSensors);
 
 export default router;
