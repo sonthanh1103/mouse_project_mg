@@ -1,5 +1,6 @@
 import { Product } from '../models/index.js';
 import responseHelper from "../helpers/responseHelper.js";
+import mongoose from 'mongoose';
 
 // render view
 export const productPage = async (req, res) => {
