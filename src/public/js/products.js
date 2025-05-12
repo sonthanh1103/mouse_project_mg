@@ -22,7 +22,7 @@ $(function() {
     url: '/api/product/get',
     dataSrc: 'data' 
     },
-    scrollX: true,        
+    scrollX: true,
     scrollCollapse: true, 
     responsive: true,
     columns: [
@@ -82,7 +82,7 @@ $(function() {
       lookup = res.data;
       $('#addProductBtn').prop('disabled', false);
     } else {
-      toastr.error('Không lấy được dữ liệu tham chiếu');
+      toastr.error('Cannot get ref data.');
     }
   });
 
@@ -210,8 +210,8 @@ $(function() {
         }
       }, 
       error: (xhr) => {
-        const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Update error';
-        toastr.error(errorMessage);
+        const errorMessage = xhr.responseJSON.message;
+        toastr.error(errorMessage || 'Update error');
         }
     })
   }
@@ -225,7 +225,7 @@ $(function() {
     front_flare: lookup.front_flare.length > 0 ? lookup.front_flare[0]._id : null,
     side_curvature: lookup.side_curvature.length > 0 ? lookup.side_curvature[0]._id : null,
     sensor: lookup.sensor.length > 0 ? lookup.sensor[0]._id : null
-    }
+    };
 
     $.ajax({
       url: '/api/product/create',
@@ -233,16 +233,16 @@ $(function() {
       contentType: 'application/json',
       data: JSON.stringify(defaultProductData),
       success: function (res) {
-        if (res && res.success) {
-          $('#productTable').DataTable().ajax.reload(null, false);
-          toastr.success(res.message || 'Added successfully');
-        } else {
+        if (!res.success) {
           toastr.error(res.message || 'Failed to add');
-        }
+          return;
+        } 
+        table.row.add(res.data).draw(false);
+        toastr.success(res.message || 'Added successfully');
       },
       error: function (xhr) {
         console.log(xhr)
-        const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'An error occurred while adding the product';
+        const errorMessage = xhr.responseJSON?.message || 'An error occurred while adding the product';
         toastr.error(errorMessage);
       }
     });
@@ -273,7 +273,7 @@ $(function() {
       contentType: 'application/json',
       data: JSON.stringify({ productIds: selectedProducts }),
       success: function (res) {
-        if (res && res.success) {
+        if (res.success) {
           $('#productTable').DataTable().ajax.reload(null, true);
           toastr.success(res.message);
           $('#selectAll').prop('checked', false); 

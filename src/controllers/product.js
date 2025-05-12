@@ -28,10 +28,10 @@ export const createProduct = async (req, res) => {
     await newProduct.save();
 
     const saved = await Product.findById(newProduct._id)
-    .populate('material brand front_flare side_curvature sensor')
-    .lean();
+      .populate('material brand front_flare side_curvature sensor')
+      .lean();
 
-  responseHelper.success(res, saved, 'Added');
+    responseHelper.success(res, saved, 'Added');
   } catch (error) {
     responseHelper.error(res, error.message);
   }
@@ -45,14 +45,14 @@ export const updateProduct = async (req, res) => {
     const existing = await Product.findById(id).lean();
     if (!existing) return responseHelper.error(res, 'Product Not found', 404);
 
-    const nameToCheck  = req.body.name  ?? existing.name;
+    const nameToCheck = req.body.name ?? existing.name;
     const brandToCheck = req.body.brand ?? existing.brand;
 
     const duplicate = await Product.findOne({
       name: nameToCheck,
       brand: brandToCheck,
       _id: { $ne: id }
-    })
+    });
 
     if (duplicate) {
       return responseHelper.error(res, `Product with name "${nameToCheck}" for that brand already exists.`, 400);
@@ -61,6 +61,7 @@ export const updateProduct = async (req, res) => {
     const updatedProduct = await Product.findByIdAndUpdate(id, req.body, { new: true })
       .populate('material brand front_flare side_curvature sensor')
       .lean();
+
     responseHelper.success(res, updatedProduct, 'Updated');
   } catch (error) {
     responseHelper.error(res, error.message);
@@ -70,13 +71,19 @@ export const updateProduct = async (req, res) => {
 // DELETE products
 export const delProducts = async (req, res) => {
   try {
-      const { productIds } = req.body;
-      const result = await Product.deleteMany({
-          _id: { $in: productIds }
-      });
+    const { productIds } = req.body;
 
-      responseHelper.success(res, `DelCounts: ${result.deletedCount}` ,'Deleted');
+    const validIds = productIds.filter(id => mongoose.Types.ObjectId.isValid(id));
+    if (validIds.length !== productIds.length) {
+        return responseHelper.error(res, 'Invalid product IDs provided.', 400);
+    }
+
+    const result = await Product.deleteMany({
+      _id: { $in: validIds }
+    });
+
+    responseHelper.success(res, `Deleted ${result.deletedCount} product(s).`, 'Deleted');
   } catch (error) {
-      responseHelper.error(res, error.message);
+    responseHelper.error(res, error.message);
   }
 };
