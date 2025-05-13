@@ -50,6 +50,17 @@ export const updateProduct = async (req, res) => {
     const nameToCheck = req.body.name ?? existing.name;
     const brandToCheck = req.body.brand ?? existing.brand;
 
+    const numFields = ['length','width','height','weight','dpi','polling_rate','tracking_speed','acceleration','side_buttons','middle_buttons'];
+    for (const field of numFields) {
+      if (field in req.body) {
+        const value = Number(req.body[field]);
+        if (isNaN(value) || value < 0) {
+          return responseHelper.error(res, `${field} must be a non-negative number`, 400);
+        }
+        req.body[field] = value;
+      }
+    }
+
     const duplicate = await Product.findOne({
       name: nameToCheck,
       brand: brandToCheck,
@@ -84,7 +95,7 @@ export const delProducts = async (req, res) => {
       _id: { $in: validIds }
     });
 
-    responseHelper.success(res, `Deleted ${result.deletedCount} product(s).`, 'Deleted');
+    responseHelper.success(res, `Deleted ${result.deletedCount} product${result.deletedCount > 1 ? 's':''}.`, 'Deleted');
   } catch (error) {
     responseHelper.error(res, error.message);
   }

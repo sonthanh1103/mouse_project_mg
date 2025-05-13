@@ -160,12 +160,13 @@ $(function() {
     $editor.on('blur keydown', function(e) {
       if (e.type === 'keydown' && e.which !== 13) return;
       const newVal = $editor.val();
-      finish(newVal);
      if (newVal != oldVal) {
         updateField(id, { [field]: newVal }, () => {
           finish(newVal);
           table.order(table.order()).draw();
         });
+      } else {
+        finish(newVal);
       }
     });
 
