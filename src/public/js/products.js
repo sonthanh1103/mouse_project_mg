@@ -17,6 +17,17 @@ $(function() {
 
   // initial DataTable
   const table = $('#productTable').DataTable({
+    dom:
+    // Top bar: search+length trái, buttons phải
+    '<"top-bar d-flex justify-content-between align-items-center mb-3"' +
+      '<"search-length d-flex align-items-center"fl>' +  // f = filter, l = length
+      '<"action-btn-group">' +                           // placeholder cho nút
+    '>' +
+    // Table
+    'rt' +
+    // Bottom bar: info + pagination
+    '<"bottom-bar d-flex justify-content-between align-items-center mt-3"ip>',
+    pageLength: 50,
     order: [],
     ajax: { 
     url: '/api/product/get',
@@ -71,7 +82,13 @@ $(function() {
       { data: 'acceleration', render: renderCell('acceleration') },
       { data: 'side_buttons', render: renderCell('side_buttons') },
       { data: 'middle_buttons', render: renderCell('middle_buttons') }
-    ]
+    ], 
+    initComplete: function () {
+      $(".action-btn-group").html(`
+        <button class="btn btn-outline-secondary me-2" id="deleteProductBtn">Delete</button>
+        <button class="btn btn-outline-success" id="addProductBtn">Add Product</button>
+      `);
+    }
   });
 
   // lookup data
@@ -218,7 +235,8 @@ $(function() {
   }
 
   // add
-  $('#addProductBtn').on('click', function () {
+  $('#productTable_wrapper').on('click', '#addProductBtn', function () {
+  // $('#addProductBtn').on('click', function () {
     
     const defaultProductData = {
     brand: lookup.brand.length > 0 ? lookup.brand[0]._id : null,
@@ -256,7 +274,8 @@ $(function() {
   });
   
   //delete checkboxes selected
-  $('#deleteProductBtn').on('click', function () {
+  //  $('#deleteProductBtn').on('click', function () {
+  $('#productTable_wrapper').on('click', '#deleteProductBtn', function () {
     const selectedProducts = $('.productCheckbox:checked').map(function () {
       return $(this).data('id');
     }).get();

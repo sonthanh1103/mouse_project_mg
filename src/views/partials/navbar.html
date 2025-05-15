@@ -11,14 +11,13 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <!-- Product with clickable link + dropdown split -->
         <li class="nav-item dropdown d-flex align-items-center">
-          <!-- Main link: active when any child page or product -->
-          <a class="nav-link <%= ['product','brand','material','front_flare','side_curvature','sensor'].includes(page) ? 'active' : '' %>" href="/product">Product</a>
           <!-- Split toggle -->
           <button class="nav-link dropdown-toggle dropdown-toggle-split ms-0 ps-0 
-            <%= ['brand','material','front_flare','side_curvature','sensor'].includes(page) ? 'active' : '' %>" id="productDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="visually-hidden">Toggle Dropdown</span>
+            <%= ['product','brand','material','front_flare','side_curvature','sensor'].includes(page) ? 'active' : '' %>" id="productDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class>Product</span>
           </button>
           <ul class="dropdown-menu" aria-labelledby="productDropdown">
+            <li><a class="dropdown-item <%= page === 'product' ? 'active' : '' %>" href="/product">Product</a></li>
             <li><a class="dropdown-item <%= page === 'brand' ? 'active' : '' %>" href="/brand">Brand</a></li>
             <li><a class="dropdown-item <%= page === 'material' ? 'active' : '' %>" href="/material">Material</a></li>
             <li><a class="dropdown-item <%= page === 'front_flare' ? 'active' : '' %>" href="/front-flare">Front Flare</a></li>
