@@ -4140,6 +4140,7 @@
 .bg-white{
     background: white !important;
 }
+.bg-red { background-color: rgb(249, 179, 179); }
 /*Layout*/
 .dp-none { display: none; }
 .h-auto { height: auto; }

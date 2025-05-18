@@ -383,7 +383,10 @@ $(function () {
       contentType: 'application/json',
       data: JSON.stringify(defaultProductData),
       success: res => {
-        if (!res.success) return toastr.error(res.message || 'Failed to add');
+        if (!res.success) {
+           toastr.error(res.message || 'Failed to add');
+           return;
+          }
         table.ajax.reload(null, true);
         toastr.success(res.message || 'Added successfully');
       },
@@ -418,5 +421,4 @@ $(function () {
       error: xhr => toastr.error(xhr.responseJSON?.message || 'An error occurred while processing your request')
     });
   });
-
 });
