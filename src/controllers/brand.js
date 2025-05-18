@@ -8,20 +8,29 @@ export const brandPage = (req, res) => {
     })
 }
 
+// export const getBrands = async (req, res) => {
+//     try {
+//         const { s } = req.query;
+//         const filter = {};
+//         if (s) {
+//             filter["$or"] = [
+//                 { name: { $regex: s, $options: 'i'}},
+//                 { description: { $regex: s, $options: 'i'}}
+//             ]
+//         }
+//         const brands = await Brand.find(filter);
+//         responseHelper.success(res, brands)
+//     } catch (error) {
+//         responseHelper.error(res, error.message);
+//     }
+// }
+
 export const getBrands = async (req, res) => {
     try {
-        const { s } = req.query;
-        const filter = {};
-        if (s) {
-            filter["$or"] = [
-                { name: { $regex: s, $options: 'i'}},
-                { description: { $regex: s, $options: 'i'}}
-            ]
-        }
-        const brands = await Brand.find(filter);
-        responseHelper.success(res, brands)
+        const getData = await Brand.find().sort({ createdAt: -1 });
+        responseHelper.success(res, getData);
     } catch (error) {
-        responseHelper.error(res, error.message);
+        responseHelper.error(res, error.message)
     }
 }
 

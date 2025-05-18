@@ -22,6 +22,7 @@ router.post('/api/product/delete',      isAuthenticated, productController.delPr
 
 // brand
 router.get('/brand',                    isAuthenticated, brandController.brandPage);
+// router.get('/api/brand/get',            isAuthenticated, brandController.getBrands);
 router.get('/api/brand/get',            isAuthenticated, brandController.getBrands);
 router.post('/api/brand/create',        isAuthenticated, brandController.createBrand);
 router.put('/api/brand/update/:id',     isAuthenticated, brandController.updateBrand);

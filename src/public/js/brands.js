@@ -1,36 +1,59 @@
 $(function () {
-  // get all data
-  function getBrands(s = '') {
-     const query = s ? `?s=${encodeURIComponent(s)}` : '';
-    $.get(`/api/brand/get${query}`, function (response) {
-      $('#brandTableBody').empty(); 
-      response.data.forEach(brand => {
-        $('#brandTableBody').prepend(generateRow(brand));
-      });
-      $('.dataInput').prop('readonly', false); 
-    });
-  }
-
-    //get (s) from query
-  $('#search-form').on('submit', function (e) {
-    e.preventDefault();
-    const s = $('#brandSearchInput').val().trim();
-    getBrands(s);
+  // initial DataTable
+  const table = $('#brandTable').DataTable({
+    dom: '<"top-bar d-flex justify-content-between align-items-center flex-wrap mb-2"l' +
+         'f' +
+         '<"right-group d-flex justify-content-between align-items-center">' +
+         '>' +
+         'rt' +
+         '<"bottom-bar d-flex justify-content-between mt-3 mb-3"ip>',
+    order: [],
+    ajax: {
+      url: '/api/brand/get',
+      dataSrc: 'data'
+    },
+    pageLength: 50,
+    language: { search: '', searchPlaceholder: 'Search' },
+    columns: [
+      {
+        data: null,
+        orderable: false,
+        className: 'text-center',
+        render: (data, type, row) => `<input type="checkbox" class="brandCheckbox" data-id="${row._id}">`
+      },
+      { 
+        data: 'name', 
+        render: (data, type, row) => `<input type="text" class="dataInput border-0 w-100" data-field="name" value="${data}" />`
+      },
+      { 
+        data: 'description', 
+        render: (data, type, row) => `<input type="text" class="dataInput border-0 w-100" data-field="description" value="${data}" />`
+      }
+    ],
+    rowCallback: function(row, data) {
+      // Tag row with data-id for update
+      $(row).attr('data-id', data._id);
+    },
+    initComplete: function () {
+      $('.right-group').html(`
+         <div class="btn-group">
+              <button class="btn btn-outline-secondary me-2" id="deleteBrandBtn">Delete</button>
+              <button class="btn btn-outline-success" id="addBrandBtn">Add Brand</button>
+        </div>
+      `)
+    }
   })
-  
-  // initial load
-  getBrands();
-  
+
   // add
-    $('#addBrandBtn').on('click', function () {
+    $('#brandTable_wrapper').on('click', '#addBrandBtn', function () {
         $.ajax({
             url: '/api/brand/create',
             method: 'POST',
             contentType: 'application/json',
             success: function (res) {
-                if (res) {
+                if (res.success) {
                     toastr.success(res.message)
-                    getBrands();
+                    table.ajax.reload(null, true);
                 } else {
                     toastr.error(res.message);
                 }
@@ -42,7 +65,7 @@ $(function () {
     })
 
   // update
-    $(document).on('change', '.dataInput', function () {
+    $('#brandTable tbody').on('change', '.dataInput', function () {
 
     let row = $(this).closest('tr');
     let id = row.attr('data-id');
@@ -58,7 +81,7 @@ $(function () {
       contentType: 'application/json',
       data: JSON.stringify( updateData ),
       success: function (res) {
-        if (res) {
+        if (res.success) {
             toastr.success(res.message);
             return;
         }
@@ -76,7 +99,7 @@ $(function () {
   });
   
   // delete
-  $('#deleteBrandBtn').on('click', function () {
+  $('#brandTable_wrapper').on('click', '#deleteBrandBtn', function () {
     const selectedBrands = $('.brandCheckbox:checked').map(function () {
       return $(this).data('id');
     }).get();
@@ -95,7 +118,7 @@ $(function () {
       data: JSON.stringify({ brandIds: selectedBrands }),
       success: function (res) {
         toastr.success(res.message)
-        getBrands();
+        table.ajax.reload(null, true);
         $('#selectAll').prop('checked', false);
       },
       error: function (error) {
@@ -104,13 +127,3 @@ $(function () {
     });
   });
 });
-
-function generateRow(brand) {
-  return `
-    <tr data-id="${brand._id}">
-      <td class="t_center"><input type="checkbox" class="brandCheckbox" data-id="${brand._id}"></td>
-      <td><input type="text" class="dataInput border-0" style="width:100%" data-field="name" value="${brand.name}" /></td>
-      <td><input type="text" class="dataInput border-0" style="width:100%" data-field="description" value="${brand.description}" /></td>
-    </tr>
-  `;
-}
