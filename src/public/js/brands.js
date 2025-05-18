@@ -37,8 +37,12 @@ $(function () {
     initComplete: function () {
       $('.right-group').html(`
          <div class="btn-group">
-              <button class="btn btn-outline-secondary me-2" id="deleteBrandBtn">Delete</button>
-              <button class="btn btn-outline-success" id="addBrandBtn">Add Brand</button>
+              <button class="btn btn-outline-secondary me-2" id="deleteBrandBtn">
+                <i class="bi bi-trash me-1"></i> Delete
+              </button>
+              <button class="btn btn-outline-success" id="addBrandBtn">
+                <i class="bi bi-person-plus me-1"></i> Add Brand
+              </button>
         </div>
       `)
     }

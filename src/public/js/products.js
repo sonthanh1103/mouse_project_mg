@@ -238,8 +238,12 @@ $(function () {
         `)
       $('.right-group').html(`
         <div class="btn-group flex-wrap">
-          <button class="btn btn-outline-secondary me-2" id="deleteProductBtn">Delete</button>
-          <button class="btn btn-outline-success" id="addProductBtn">Add Product</button>
+          <button class="btn btn-outline-secondary me-2" id="deleteProductBtn">
+          <i class="bi bi-trash"></i> Delete
+          </button>
+          <button class="btn btn-outline-success" id="addProductBtn">
+          <i class="bi bi-plus-circle"></i> Add Product
+          </button>
         </div>
       `);
       buildFilters(lookup);
@@ -386,7 +390,9 @@ $(function () {
         if (!res.success) {
            toastr.error(res.message || 'Failed to add');
            return;
-          }
+        }
+        $('.filter-check, .filter-range').prop('checked', false).val('');
+        $.fn.dataTable.ext.search = [];
         table.ajax.reload(null, true);
         toastr.success(res.message || 'Added successfully');
       },
