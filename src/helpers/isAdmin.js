@@ -3,7 +3,7 @@ const isAdmin = (req, res, next) => {
       return next();
     }
     return res.render('errors/permission', {
-      title: 'Permission'
+      title: '403 - Không có quyền truy cập'
     });
   };
   

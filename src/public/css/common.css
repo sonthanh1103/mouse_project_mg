@@ -4170,7 +4170,7 @@ input:focus {
 }
 
 .form-control:focus {
-  border: none;
+  /* border: none; */
   outline: none;
   box-shadow: none;
 }
