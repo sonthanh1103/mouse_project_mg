@@ -23,11 +23,11 @@ $(function () {
       },
       { 
         data: 'name', 
-        render: (data, type, row) => `<input type="text" class="dataInput border-0 w-100" data-field="name" value="${data}" />`
+        render: (data, type, row) => `<input type="text" class="dataInput border-0 w-100 form-control" data-field="name" value="${data}" />`
       },
       { 
         data: 'description', 
-        render: (data, type, row) => `<input type="text" class="dataInput border-0 w-100" data-field="description" value="${data}" />`
+        render: (data, type, row) => `<input type="text" class="dataInput border-0 w-100 form-control" data-field="description" value="${data}" />`
       }
     ],
     rowCallback: function(row, data) {
