@@ -4140,14 +4140,18 @@
 .bg-white{
     background: white !important;
 }
+.bg-red { background-color: rgb(249, 179, 179); }
 /*Layout*/
 .dp-none { display: none; }
 .h-auto { height: auto; }
 .w-100 { width: 100%;}
 .mw-400 { max-width: 400px;}
+.w { width: 300px !important; }
+.relative { position: relative; }
 .justify-content-center { justify-content: center; }
-.layout {display: flex; align-items: center; justify-content: center; min-height: 100vh;}
-
+.layout { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.min-160 { min-width: 160px;}
+.w-65 { width: 65px;}
 /* ===== Notification messages ===== */
 .nNote { cursor: pointer; margin: 0; padding: 10px; box-shadow: inset 0 0 1px #fff; -webkit-box-shadow: inset 0 0 1px #fff; -moz-box-shadow: inset 0 0 1px #fff; z-index: 1000000;width: 100%;text-align: center;position: fixed}
 .nNote strong { margin-right: 5px; }
@@ -4163,27 +4167,72 @@
 input:focus {
     outline: none;
     box-shadow: none;
-  }
+}
 
-  .cell {
-    display: inline-block;     
-    min-width: 50px;            
-    padding: 2px 4px;
-    cursor: pointer;
-  }
-  .cell:hover {
-    background: #f0f0f0;
-  }
-  .product-name-cell .cell {
-    min-width: 80px;
-  }
+.form-control:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
 
-  
+/* edit inline */
+.cell {
+  display: inline-block;     
+  min-width: 50px;            
+  padding: 2px 4px;
+  cursor: pointer;
+}
+.cell:hover {
+  background: #c7c7c7;
+}
+.product-name-cell .cell {
+  min-width: 80px;
+}
+
+/* dropdown active */
 .dropdown-item.active, .dropdown-item:active {
   background-color: #f0f0f0 !important; 
   color: #141414 !important;               
 }
 
+/* dataTable */
 .dt-input {
   margin-right: 10px;
+}
+
+/*side bar*/
+#mainContent.sidebar-pushed {
+  margin-left: 300px;
+  transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
+}
+#mainContent {
+  transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
+}
+@media (max-width: 575.98px) {
+  #mainContent.sidebar-pushed {
+    margin-left: 0 !important;
+  }
+}
+
+/*border bottom*/
+#filterSidebar .accordion-button {
+  border: none !important;
+  border-bottom: 2px solid #dfdddd !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Bỏ border ở accordion-item */
+#filterSidebar .accordion-item {
+  border: none !important;
+}
+
+/* đổi border-bottom hoặc màu */
+#filterSidebar .accordion-button:not(.collapsed) {
+  background: #f7f9fa !important;
+  color: #131313;
+  border-bottom: 2.5px solid #dfdddd !important;
+  box-shadow: none !important;
 }
