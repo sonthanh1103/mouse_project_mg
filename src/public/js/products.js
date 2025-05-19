@@ -138,9 +138,9 @@ $(function () {
           <div class="min-160">
             <div class="fw-bold small mb-1">${capitalizeFirst(field.replace(/_/g, ' '))}</div>
             <div class="d-flex gap-1 align-items-center">
-              <input type="number" class="form-control form-control-sm filter-range w-65" data-field="${field}" data-type="min" placeholder="Min">
+              <input type="number" class="form-control form-control-sm filter-range w-80" data-field="${field}" data-type="min" placeholder="Min">
               <span class="mx-1">-</span>
-              <input type="number" class="form-control form-control-sm filter-range w-65" data-field="${field}" data-type="max" placeholder="Max">
+              <input type="number" class="form-control form-control-sm filter-range w-80" data-field="${field}" data-type="max" placeholder="Max">
             </div>
           </div>
         `);
