@@ -4175,6 +4175,11 @@ input:focus {
   box-shadow: none;
 }
 
+/* dataTable */
+.dt-input {
+  margin-right: 10px;
+}
+
 /* edit inline */
 .cell {
   display: inline-block;     
@@ -4182,57 +4187,7 @@ input:focus {
   padding: 2px 4px;
   cursor: pointer;
 }
-.cell:hover {
-  background: #c7c7c7;
-}
+
 .product-name-cell .cell {
   min-width: 80px;
-}
-
-/* dropdown active */
-.dropdown-item.active, .dropdown-item:active {
-  background-color: #f0f0f0 !important; 
-  color: #141414 !important;               
-}
-
-/* dataTable */
-.dt-input {
-  margin-right: 10px;
-}
-
-/*side bar*/
-#mainContent.sidebar-pushed {
-  margin-left: 300px;
-  transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
-}
-#mainContent {
-  transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
-}
-@media (max-width: 575.98px) {
-  #mainContent.sidebar-pushed {
-    margin-left: 0 !important;
-  }
-}
-
-/*border bottom*/
-#filterSidebar .accordion-button {
-  border: none !important;
-  border-bottom: 2px solid #dfdddd !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-/* Bỏ border ở accordion-item */
-#filterSidebar .accordion-item {
-  border: none !important;
-}
-
-/* đổi border-bottom hoặc màu */
-#filterSidebar .accordion-button:not(.collapsed) {
-  background: #f7f9fa !important;
-  color: #131313;
-  border-bottom: 2.5px solid #dfdddd !important;
-  box-shadow: none !important;
 }

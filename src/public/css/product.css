@@ -1,0 +1,42 @@
+/* dropdown active */
+.dropdown-item.active, .dropdown-item:active {
+  background-color: #f0f0f0 !important; 
+  color: #141414 !important;               
+}
+
+/*side bar*/
+#mainContent.sidebar-pushed {
+    margin-left: 300px;
+    transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
+}
+#mainContent {
+    transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
+}
+@media (max-width: 575.98px) {
+    #mainContent.sidebar-pushed {
+        margin-left: 0 !important;
+    }
+}
+
+/*border bottom*/
+#filterSidebar .accordion-button {
+    border: none !important;
+    border-bottom: 2px solid #333 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Bỏ border ở accordion-item */
+#filterSidebar .accordion-item {
+    border: none !important;
+}
+
+/* đổi border-bottom hoặc màu khi mở */
+#filterSidebar .accordion-button:not(.collapsed) {
+    background: #222 !important;
+    color: #fff !important;
+    border-bottom: 2.5px solid #333 !important;
+    box-shadow: none !important;
+}

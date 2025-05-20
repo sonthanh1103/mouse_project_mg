@@ -1,0 +1,55 @@
+<%- include('../partials/ui_header.html') %>
+<%- include('../partials/ui_navbar.html') %>   
+
+<div id="mainContent" class="container-fluid mt80 relative">
+  <div class="offcanvas offcanvas-start w bg-dark text-white" tabindex="-1" id="filterSidebar"
+       aria-labelledby="filterSidebarLabel" data-bs-scroll="true" data-bs-backdrop="false">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="filterSidebarLabel">Filters</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column h-100 pb-0">
+      <div class="accordion flex-grow-1 overflow-auto" id="filterAccordion"></div>
+      <div class="bg-dark border-top pt-3 pb-3 position-sticky bottom-0">
+        <button class="btn btn-outline-info" id="applyFiltersBtn">Apply Filters</button>
+        <button class="btn btn-outline-danger ms-2" id="clearFiltersBtn">Clear Filters</button>
+      </div>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table id="productTable" class="table table-dark table-striped nowrap w-100">
+      <thead>
+        <tr>
+          <th>Brand</th>
+          <th>Name</th>
+          <th>Length (mm)</th>
+          <th>Width (mm)</th>
+          <th>Height (mm)</th>
+          <th>Weight (g)</th>
+          <th>Shape</th>
+          <th>Hump Placement</th>
+          <th>Front Flare</th>
+          <th>Side Curvature</th>
+          <th>Hand Compatibility</th>
+          <th>Thumb Rest</th>
+          <th>Ring Finger Rest</th>
+          <th>Material</th>
+          <th>Connectivity</th>
+          <th>Sensor</th>
+          <th>Sensor Technology</th>
+          <th>Sensor Position</th>
+          <th>DPI</th>
+          <th>Polling Rate</th>
+          <th>Tracking Speed (IPS)</th>
+          <th>Acceleration (G)</th>
+          <th>Side Buttons</th>
+          <th>Middle Buttons</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/commonjs.html') %>
+<script src="/js/database.js"></script>
+<%- include('../partials/footer.html') %>

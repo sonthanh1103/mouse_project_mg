@@ -15,14 +15,13 @@ router.get('/api/product/lookup', lookupController.getProductLookUp); // get all
 
 // product
 router.get('/product',                  isAuthenticated, productController.productPage)    // render view Product Page
-router.get('/api/product/get',          isAuthenticated, productController.getProducts);   // get Products
+router.get('/api/product/get',                           productController.getProducts);   // get Products
 router.post('/api/product/create',      isAuthenticated, productController.createProduct); // post
 router.put('/api/product/update/:id',   isAuthenticated, productController.updateProduct); // post
 router.post('/api/product/delete',      isAuthenticated, productController.delProducts);   // post
 
 // brand
 router.get('/brand',                    isAuthenticated, brandController.brandPage);
-// router.get('/api/brand/get',            isAuthenticated, brandController.getBrands);
 router.get('/api/brand/get',            isAuthenticated, brandController.getBrands);
 router.post('/api/brand/create',        isAuthenticated, brandController.createBrand);
 router.put('/api/brand/update/:id',     isAuthenticated, brandController.updateBrand);
