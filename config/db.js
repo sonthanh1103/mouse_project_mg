@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
-import constants from './constants.js';
+import dotenv from 'dotenv';
 
-const MONGO_URI = constants.MONGODB_URI;
+dotenv.config();
+
+const MONGO_URI = process.env.MONGODB_URI;
 const mongoOptions = { autoIndex: true };
 
 const connectDB = async () => {
