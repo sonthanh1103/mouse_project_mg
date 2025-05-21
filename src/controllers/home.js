@@ -28,14 +28,14 @@ export const databasePage = async (req, res) => {
 export const reviewPage = async (req, res) => {
     res.render('productUI/reviews', {
         title: 'Reviews',
-        page: 'review'
+        page: 'reviews'
     })
 }
 
 export const discountPage = async (req, res) => {
     res.render('productUI/discounts', {
         title: 'Discounts',
-        page: 'discount'
+        page: 'discounts'
     })
 }
 

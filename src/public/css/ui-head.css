@@ -1,64 +1,101 @@
-body {
-    background-color: #111 !important;
-    color: #fff !important;
-    font-family: 'Segoe UI', sans-serif;
+:root {
+    --bg-dark: #111;
+    --bg-darker: #222;
+    --bg-darkest: #333;
+    --bg-light: #f8f9fa;
+    --text-light: #fff;
+    --accent-info: #17a2b8;
+    --accent-danger: #dc3545;
+    --border-dark: #222;
+    --border-strong: #333;
+    --radius: 0.75rem;
+    --transition: 0.2s;
+    --main-transition: 0.35s cubic-bezier(.77,0,.18,1);
+    --font-main: 'Segoe UI', sans-serif;
 }
 
+/* Base styles */
+body {
+    background-color: var(--bg-dark) !important;
+    color: var(--text-light) !important;
+    font-family: var(--font-main);
+}
+
+/* Feature box */
 .feature-box {
-    background-color: #222;
+    background-color: var(--bg-darker);
     padding: 1.5rem;
-    border-radius: .75rem;
+    border-radius: var(--radius);
+    color: var(--text-light);
     text-decoration: none;
-    color: #fff;
-    transition: background-color 0.2s;
+    transition: background-color var(--transition);
     display: block;
     height: 100%;
 }
 .feature-box:hover {
-    background-color: #333;
+    background-color: var(--bg-darkest);
 }
 
-/* Toggle chỉ hiện trên <992px */
+/* Navbar toggler: visible only on < 992px */
 .navbar-toggler {
     border: none;
     font-size: 1.5rem;
-    color: #fff;
+    color: var(--text-light);
+    display: block;
 }
-
-#offcanvasMenu {
-  width: 300px !important;
-  max-width: 90vw;
-}
-
-@media (min-width: 992px) {                                  
+@media (min-width: 992px) {
     .navbar-toggler {
         display: none;
     }
-    /* Ẩn chỉ offcanvas menu mobile trên màn lớn */
     #offcanvasMenu,
     #offcanvasMenu ~ .offcanvas-backdrop {
         display: none !important;
     }
-    /* KHÔNG ẩn .offcanvas-start (filterSidebar) */
 }
 
-li:hover {
-    background-color: #585858;
-    border-radius: 5px;
+/* Offcanvas menu width*/
+#offcanvasMenu {
+    width: 300px !important;
+    max-width: 90vw;
+    background-color: var(--bg-dark) !important;
+    color: var(--text-light) !important;
 }
 
-/* Căn giữa nav-items trên màn >= lg */
+/* Nav links */
 .navbar-nav {
     margin: 0 auto;
 }
 
-#offcanvasMenu .nav-link:hover,
-#offcanvasMenu .nav-link:focus {
-    background-color: #222 !important;
-    color: #fff !important;
+.navbar-nav .nav-link,
+.offcanvas .nav-link {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color var(--transition);
+    text-align: center;
+    color: var(--text-light) !important;
 }
 
-/* Nền đen, chữ trắng cho filter sidebar */
+/* nav-link action */
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active,
+.offcanvas .nav-link:hover,
+.offcanvas .nav-link.active {
+    background-color: rgba(255,255,255,0.1) !important;
+}
+
+/* offcanvasMenu right (navbar) */
+#offcanvasMenu .nav-link:hover,
+#offcanvasMenu .nav-link:focus {
+    background-color: var(--bg-darker) !important;
+    color: var(--text-light) !important;
+}
+#offcanvasMenu .offcanvas-title {
+    color: var(--text-light) !important;
+}
+
+/* Sidebar & filter */
 #filterSidebar,
 #filterSidebar .offcanvas-header,
 #filterSidebar .offcanvas-title,
@@ -70,66 +107,68 @@ li:hover {
 #filterSidebar select,
 #filterSidebar .bg-white,
 #filterSidebar .border-top {
-    background-color: #111 !important;
-    color: #fff !important;
-    border-color: #222 !important;
-}
-#filterSidebar .accordion-button:not(.collapsed) {
-    background: #222 !important;
-    color: #fff !important;
-    border-bottom: 2.5px solid #333 !important;
+    background-color: var(--bg-dark) !important;
+    color: var(--text-light) !important;
+    border-color: var(--border-dark) !important;
 }
 
-/* Nút "Apply Filters" & "Clear Filters" */
-#filterSidebar .btn {
-    color: #fff;
-    border-color: #17a2b8;
-    background: transparent;
-}
-#filterSidebar .btn-outline-info {
-    border-color: #17a2b8;
-    color: #17a2b8;
-}
-#filterSidebar .btn-outline-danger {
-    border-color: #dc3545;
-    color: #dc3545;
-}
+/* filter & clear btn */
 #filterSidebar .btn:hover {
-    background-color: #222;
-    color: #fff;
+    background-color: var(--bg-darker);
+    color: var(--text-light);
 }
 
-/* Table headers/chữ trắng */
-#productTable th, #productTable td {
-    color: #fff !important;
+/* Table headers/cells */
+#productTable th,
+#productTable td {
+    color: var(--text-light) !important;
 }
 
-/* Offcanvas menu bên phải (menu mobile) giữ màu đen, chữ trắng */
-#offcanvasMenu {
-    background-color: #111 !important;
-    color: #fff !important;
+/* Main content sidebar push */
+#mainContent {
+    transition: margin-left var(--main-transition);
 }
-#offcanvasMenu .offcanvas-title {
-    color: #fff !important;
-}
-#offcanvasMenu .nav-link {
-    color: #fff !important;
-}
-#offcanvasMenu .nav-link:hover, #offcanvasMenu .nav-link:focus {
-    background-color: #222 !important;
-    color: #fff !important;
-}
-
 #mainContent.sidebar-pushed {
     margin-left: 300px;
-    transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
 }
-#mainContent {
-    transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
-}
-
 @media (max-width: 575.98px) {
     #mainContent.sidebar-pushed {
         margin-left: 0 !important;
     }
+}
+
+/* Offcanvas .btn-close (bg-color: white) */
+.offcanvas .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Bỏ border ở accordion-item */
+#filterSidebar .accordion-item,
+#filterSidebar .accordion-body {
+    border: none !important;
+}
+#filterSidebar .accordion-body {
+    border-bottom: 2px solid #fff !important;
+}
+
+/* accordion-button hover */
+#filterSidebar .accordion-button:hover{
+    background-color: var(--bg-darker) !important;
+    color: var(--text-light) !important;
+}
+
+/* accordion icon */
+#filterSidebar .accordion-button::after {
+    filter: brightness(0) invert(1);
+}
+/* Accordion button: Remove border, radius, box-shadow (open || not)  */
+/* Khi mở chỉ giữ */
+#filterSidebar .accordion-button,
+#filterSidebar .accordion-button:not(.collapsed) {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+#filterSidebar .accordion-button:not(.collapsed) {
+    border-bottom: 2px solid #fff !important;
 }
