@@ -80,6 +80,10 @@ app.use(express.static(path.join(__dirname, '/public')));
 // Khởi động server
 app.use('/', router)
 
+app.use((req, res) => {
+    res.status(404).render('errors/error-404', { title: 'Page Not Found' });
+});
+
 app.listen(port, () => {
   console.log(`✅ Server running on http://localhost:${port}`);
 });

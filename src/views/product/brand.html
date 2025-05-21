@@ -4,15 +4,6 @@
         <h2 class="t_center fw-bold mt80">BRAND LIST</h2>
     
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <form class="search-form d-flex" id="search-form">
-              <input type="text" id="brandSearchInput" class="form-control me-2" placeholder="Search" />
-              <button type="submit" class="btn btn-outline-primary" id="brandSearch">Search</button>
-            </form>
-    
-            <div class="action-btn-group">
-              <button class="btn btn-outline-secondary" id="deleteBrandBtn">Delete</button>
-              <button class="btn btn-outline-success" id="addBrandBtn">Add Brand</button>
-            </div>
           </div>
     
           <table id="brandTable" class="table table-bordered">
@@ -23,9 +14,6 @@
                 <th>Description</th>
               </tr>
             </thead>
-            <tbody id="brandTableBody">
-              <!-- data inserted here -->
-            </tbody>
           </table>
     </div>
 <%- include('../partials/commonjs.html')%>

@@ -1,0 +1,135 @@
+body {
+    background-color: #111 !important;
+    color: #fff !important;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.feature-box {
+    background-color: #222;
+    padding: 1.5rem;
+    border-radius: .75rem;
+    text-decoration: none;
+    color: #fff;
+    transition: background-color 0.2s;
+    display: block;
+    height: 100%;
+}
+.feature-box:hover {
+    background-color: #333;
+}
+
+/* Toggle chỉ hiện trên <992px */
+.navbar-toggler {
+    border: none;
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+#offcanvasMenu {
+  width: 300px !important;
+  max-width: 90vw;
+}
+
+@media (min-width: 992px) {                                  
+    .navbar-toggler {
+        display: none;
+    }
+    /* Ẩn chỉ offcanvas menu mobile trên màn lớn */
+    #offcanvasMenu,
+    #offcanvasMenu ~ .offcanvas-backdrop {
+        display: none !important;
+    }
+    /* KHÔNG ẩn .offcanvas-start (filterSidebar) */
+}
+
+li:hover {
+    background-color: #585858;
+    border-radius: 5px;
+}
+
+/* Căn giữa nav-items trên màn >= lg */
+.navbar-nav {
+    margin: 0 auto;
+}
+
+#offcanvasMenu .nav-link:hover,
+#offcanvasMenu .nav-link:focus {
+    background-color: #222 !important;
+    color: #fff !important;
+}
+
+/* Nền đen, chữ trắng cho filter sidebar */
+#filterSidebar,
+#filterSidebar .offcanvas-header,
+#filterSidebar .offcanvas-title,
+#filterSidebar .offcanvas-body,
+#filterSidebar .accordion-button,
+#filterSidebar .accordion-item,
+#filterSidebar label,
+#filterSidebar input,
+#filterSidebar select,
+#filterSidebar .bg-white,
+#filterSidebar .border-top {
+    background-color: #111 !important;
+    color: #fff !important;
+    border-color: #222 !important;
+}
+#filterSidebar .accordion-button:not(.collapsed) {
+    background: #222 !important;
+    color: #fff !important;
+    border-bottom: 2.5px solid #333 !important;
+}
+
+/* Nút "Apply Filters" & "Clear Filters" */
+#filterSidebar .btn {
+    color: #fff;
+    border-color: #17a2b8;
+    background: transparent;
+}
+#filterSidebar .btn-outline-info {
+    border-color: #17a2b8;
+    color: #17a2b8;
+}
+#filterSidebar .btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+#filterSidebar .btn:hover {
+    background-color: #222;
+    color: #fff;
+}
+
+/* Table headers/chữ trắng */
+#productTable th, #productTable td {
+    color: #fff !important;
+}
+
+/* Offcanvas menu bên phải (menu mobile) giữ màu đen, chữ trắng */
+#offcanvasMenu {
+    background-color: #111 !important;
+    color: #fff !important;
+}
+#offcanvasMenu .offcanvas-title {
+    color: #fff !important;
+}
+#offcanvasMenu .nav-link {
+    color: #fff !important;
+}
+#offcanvasMenu .nav-link:hover, #offcanvasMenu .nav-link:focus {
+    background-color: #222 !important;
+    color: #fff !important;
+}
+
+#mainContent.sidebar-pushed {
+    margin-left: 300px;
+    transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
+}
+#mainContent {
+    transition: margin-left 0.35s cubic-bezier(.77,0,.18,1);
+}
+
+@media (max-width: 575.98px) {
+    #mainContent.sidebar-pushed {
+        margin-left: 0 !important;
+    }
+}

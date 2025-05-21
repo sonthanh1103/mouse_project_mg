@@ -5,19 +5,25 @@
           <h2 class="t_center fw-bold mt80">USER LIST</h2>
     
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <form class="search-form d-flex" id="search-form">
+            <form class="search-form d-flex align-items-center" id="search-form">
               <input type="text" id="searchById" class="form-control me-2" placeholder="Search" />
-              <button type="submit" class="btn btn-outline-primary" id="searchByIdBtn">Search</button>
+              <button type="submit" class="btn btn-outline-primary" id="searchByIdBtn">
+                <i class="bi bi-search me-1"></i></button>
+              </button>
             </form>
     
-            <div class="action-btn-group">
-              <button class="btn btn-outline-secondary" id="deleteManyBtn">Delete</button>
-              <button class="btn btn-outline-success" id="newUser">Add User</button>
+            <div class="btn-group">
+              <button class="btn btn-outline-secondary me-2" id="deleteManyBtn">
+                <i class="bi bi-trash me-1"></i> Delete
+              </button>
+              <button class="btn btn-outline-success" id="newUser">
+                <i class="bi bi-person-plus me-1"></i> Add User
+              </button>
             </div>
           </div>
     
-          <table id="userTable" class="table table-bordered">
-            <thead class="table-dark">
+          <table id="userTable" class="table table-dark table-striped">
+            <thead>
               <tr>
                 <th class="t_center"><input type="checkbox" id="selectAll"></th>
                 <th>Username</th>
@@ -61,8 +67,12 @@
                   </form>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button id="createUserBtn" class="btn btn-primary">Create</button>
+                  <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg"></i> Close
+                  </button>
+                  <button id="createUserBtn" class="btn btn-outline-primary">
+                    <i class="bi bi-person-plus me-1"></i> Create
+                  </button>
                 </div>
               </div>
             </div>
@@ -98,8 +108,12 @@
                   </form>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button id="updateUserBtnForm" class="btn btn-primary">Update</button>
+                  <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg"></i> Close
+                  </button>
+                  <button id="updateUserBtnForm" class="btn btn-outline-primary">
+                    <i class="bi bi-pencil-square me-1"></i> Update
+                  </button>
                 </div>
               </div>
             </div>

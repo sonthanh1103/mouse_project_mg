@@ -169,38 +169,13 @@ $(function () {
     };
   }
 
-  // Update field API
-  function updateField(id, fields, cb) {
-    const payload = {};
-    Object.entries(fields).forEach(([f, v]) => {
-      if (booleanFields.includes(f)) payload[f] = (v === 'Yes');
-      else if (refFields.has(f) && !v) payload[f] = null;
-      else payload[f] = v;
-    });
-    $.ajax({
-      url: `/api/product/update/${id}`,
-      method: 'PUT',
-      contentType: 'application/json',
-      data: JSON.stringify(payload),
-      success: res => {
-        if (res.success) {
-          toastr.success(res.message);
-          cb?.();
-        } else {
-          toastr.error(res.message);
-        }
-      },
-      error: xhr => toastr.error(xhr.responseJSON?.message || 'Update error')
-    });
-  }
-
   // DataTable setup
   const table = $('#productTable').DataTable({
-    dom: '<"top-bar d-flex align-items-center justify-content-between flex-wrap mb-3"' +
+     dom: '<"top-bar d-flex align-items-center justify-content-between flex-wrap mb-3"' +
          '<"left-group d-flex align-items-center">' +
          'l' +
-         '<"middle-group d-flex align-items-center ms-auto">f' +
-         '<"right-group d-flex align-items-center ms-auto btn-group flex-wrap">' +
+         '<"middle-group d-flex align-items-center ms-auto">' +
+         '<"right-group d-flex align-items-center ms-auto btn-group flex-wrap">f' +
          '>' +
          'rt' +
          '<"bottom-bar d-flex justify-content-between mt-3"ip>',
@@ -215,12 +190,6 @@ $(function () {
     scrollCollapse: true,
     responsive: true,
     columns: [
-      {
-        data: null,
-        orderable: false,
-        className: 'text-center',
-        render: (data, _, row) => `<input type="checkbox" class="productCheckbox" data-id="${row._id}">`
-      },
       ...[
         'brand', 'name', 'length', 'width', 'height', 'weight', 'shape', 'hump_placement', 'front_flare', 'side_curvature',
         'hand_compatibility', 'thumb_rest', 'ring_finger_rest', 'material', 'connectivity', 'sensor', 'sensor_technology',
@@ -236,16 +205,6 @@ $(function () {
       $('.middle-group').html(`
           <h4 class="mt5">Product List</h4>
         `)
-      $('.right-group').html(`
-        <div class="btn-group flex-wrap">
-          <button class="btn btn-outline-secondary me-2" id="deleteProductBtn">
-          <i class="bi bi-trash"></i> Delete
-          </button>
-          <button class="btn btn-outline-success" id="addProductBtn">
-          <i class="bi bi-plus-circle"></i> Add Product
-          </button>
-        </div>
-      `);
       buildFilters(lookup);
       // $('#filterBtn').on('click', () => new bootstrap.Offcanvas($('#filterSidebar')[0]).show());
     }
@@ -328,103 +287,4 @@ $(function () {
     $.fn.dataTable.ext.search = [];
     table.draw();
   });
-
-  // Inline edit
-  $('#productTable tbody').on('click', '.cell', function () {
-    const $span = $(this);
-    if ($span.data('editing')) return;
-    const field = $span.data('field');
-    const id = $span.data('id');
-    const oldVal = $span.data('value');
-    $span.data('editing', true);
-    let $editor;
-    if (enumFields[field]) {
-      $editor = $('<select class="cell-editor form-select form-select-sm"></select>');
-      enumFields[field].forEach(opt =>
-        $editor.append(`<option value="${opt}" ${opt === oldVal ? 'selected' : ''}>${opt}</option>`)
-      );
-    } else if (refFields.has(field)) {
-      $editor = $('<select class="cell-editor form-select form-select-sm"></select>');
-      lookup[field].forEach(opt =>
-        $editor.append(`<option value="${opt._id}" ${opt._id == oldVal ? 'selected' : ''}>${opt.name}</option>`)
-      );
-    } else {
-      $editor = $(`<input type="${numFields.has(field) ? 'number' : 'text'}" class="cell-editor form-control form-control-sm" value="${oldVal}">`);
-    }
-    $span.empty().append($editor);
-    $editor.focus().select();
-    $editor.on('blur keydown', function (e) {
-      if (e.type === 'keydown' && e.which !== 13) return;
-      const newVal = $editor.val();
-      if (newVal != oldVal) {
-        updateField(id, { [field]: newVal }, () => finish(newVal));
-      } else {
-        finish(newVal);
-      }
-    });
-    function finish(val) {
-      let disp = val;
-      if (enumFields[field]) disp = val;
-      else if (typeof val === 'boolean') disp = val ? 'Yes' : 'No';
-      else if (refFields.has(field)) {
-        const obj = lookup[field].find(o => o._id == val);
-        disp = obj ? obj.name : '&nbsp;';
-      } else disp = val === '' ? '&nbsp;' : val;
-      $span.data({ editing: false, value: val }).attr('class', 'cell w-100').html(disp);
-      table.order(table.order()).draw(); // Keep order after edit
-    }
-  });
-
-  // Add product
-  $('#productTable_wrapper').on('click', '#addProductBtn', function () {
-    const defaultProductData = {};
-    ['brand', 'material', 'front_flare', 'side_curvature', 'sensor'].forEach(field =>
-      defaultProductData[field] = lookup[field]?.[0]?._id || null
-    );
-    $.ajax({
-      url: '/api/product/create',
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify(defaultProductData),
-      success: res => {
-        if (!res.success) {
-           toastr.error(res.message || 'Failed to add');
-           return;
-        }
-        $('.filter-check, .filter-range').prop('checked', false).val('');
-        $.fn.dataTable.ext.search = [];
-        table.ajax.reload(null, true);
-        toastr.success(res.message || 'Added successfully');
-      },
-      error: xhr => toastr.error(xhr.responseJSON?.message || 'An error occurred while adding the product')
-    });
-  });
-
-  // Select all
-  $('#selectAll').on('change', function () {
-    $('.productCheckbox').prop('checked', $(this).prop('checked'));
-  });
-
-  // Delete selected
-  $('#productTable_wrapper').on('click', '#deleteProductBtn', function () {
-    const selectedProducts = $('.productCheckbox:checked').map((_, el) => $(el).data('id')).get();
-    if (!selectedProducts.length) return toastr.warning('Please choose at least one product.');
-    if (!confirm(`Are you sure you want to delete ${selectedProducts.length} product${selectedProducts.length > 1 ? 's' : ''}?`)) return;
-    $.ajax({
-      url: '/api/product/delete',
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({ productIds: selectedProducts }),
-      success: res => {
-        if (res.success) {
-          table.ajax.reload(null, true);
-          toastr.success(res.message);
-          $('#selectAll').prop('checked', false);
-        } else {
-          toastr.error(res.message);
-        }
-      },
-      error: xhr => toastr.error(xhr.responseJSON?.message || 'An error occurred while processing your request')
-    });
-  });
-});
+})

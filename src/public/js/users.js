@@ -338,7 +338,9 @@ function renderTable(users = []) {
             <td>${new Date(user.createdAt).toLocaleDateString()}</td>
             <td>${new Date(user.updatedAt).toLocaleDateString()}</td>
             <td>
-                <button class="updateUserBtn btn btn-warning btn-default" data-id="${user._id}">Update</button>
+                <button class="updateUserBtn btn btn-outline-warning" data-id="${user._id}">
+                    <i class="bi bi-pencil-square"></i> Update
+                </button>
             </td>
         </tr>`
     ).join('');
