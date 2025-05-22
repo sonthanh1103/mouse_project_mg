@@ -1,5 +1,27 @@
 <%- include('../partials/ui_header.html') %>
 <%- include('../partials/ui_navbar.html') %>
 
+<main class="container mt70 text-center">
+  <!-- Search box -->
+  <div class="d-flex justify-content-center mb-3 position-relative mw-500 m-auto">
+    <input type="text" class="form-control" id="searchBox" placeholder="Add mouse to comparision">
+    <div id="searchSuggestions" class="list-group position-absolute w-100 z-index-100"></div>
+  </div>
+
+  <!-- Gợi ý sản phẩm -->
+   <div>
+    <h4 class="mt-3">Select Mice to compare</h4>
+     <div id="suggestBox" class="mt-4 mb-4 mw-1000 m-auto">
+     </div>
+   </div>
+
+  <!-- Bảng so sánh -->
+  <div id="singleProductView" class="mt-4"></div>
+
+  <!-- Bảng so sánh nhiều sản phẩm -->
+  <div id="compareTableWrap" class="mt-4"></div>
+</main>
+
 <%- include('../partials/commonjs.html') %>
+<script src="/js/compare.js"></script>
 <%- include('../partials/footer.html') %>

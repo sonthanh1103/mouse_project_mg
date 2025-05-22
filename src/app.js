@@ -34,7 +34,7 @@ app.use(express.json());  // Để body của request là JSON
 
 //session
 const sessionStore = new MongoStore({
-  mongoUrl: constants.MONGODB_URI,
+  mongoUrl: process.env.MONGODB_URI,
   mongoOptions: {
     // autoReconnect: true
   }

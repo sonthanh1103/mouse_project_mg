@@ -224,7 +224,7 @@ $(function () {
       ...[
         'brand', 'name', 'length', 'width', 'height', 'weight', 'shape', 'hump_placement', 'front_flare', 'side_curvature',
         'hand_compatibility', 'thumb_rest', 'ring_finger_rest', 'material', 'connectivity', 'sensor', 'sensor_technology',
-        'sensor_position', 'dpi', 'polling_rate', 'tracking_speed', 'acceleration', 'side_buttons', 'middle_buttons'
+        'sensor_position', 'dpi', 'polling_rate', 'tracking_speed', 'acceleration', 'side_buttons', 'middle_buttons', 'svg1', 'svg2'
       ].map(f => ({ data: f, name: f, render: renderCell(f) }))
     ],
     initComplete: function () {
@@ -238,6 +238,9 @@ $(function () {
         `)
       $('.right-group').html(`
         <div class="btn-group flex-wrap">
+          <button class="btn btn-outline-info me-2" id="updateProductBtn">
+          <i class="bi bi-pencil-square"></i> Update
+          </button>
           <button class="btn btn-outline-secondary me-2" id="deleteProductBtn">
           <i class="bi bi-trash"></i> Delete
           </button>

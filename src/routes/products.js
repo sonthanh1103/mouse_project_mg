@@ -19,6 +19,9 @@ router.get('/api/product/get',                           productController.getPr
 router.post('/api/product/create',      isAuthenticated, productController.createProduct); // post
 router.put('/api/product/update/:id',   isAuthenticated, productController.updateProduct); // post
 router.post('/api/product/delete',      isAuthenticated, productController.delProducts);   // post
+router.post('/api/product/compare',                      productController.compareProducts); // compare products
+router.get('/api/product/search',                      productController.compareProducts); // compare products
+router.get('/api/product/suggested', productController.getSuggestedProducts);
 
 // brand
 router.get('/brand',                    isAuthenticated, brandController.brandPage);

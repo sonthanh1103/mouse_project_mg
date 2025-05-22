@@ -25,6 +25,8 @@ const productSchema = new mongoose.Schema({
   acceleration: { type: Number, default: 0 },
   side_buttons: { type: Number, default: 0 },
   middle_buttons: { type: Number, default: 0 },
+  svg1: { type: String, default: '' },
+  svg2: { type: String, default: '' }
 },
 {
   collection: "Products", 
