@@ -1,0 +1,146 @@
+/* General styling for SVG display */
+.svg-thumb {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Base styling for any SVG directly inside .overlay-svg */
+/* This ensures SVGs fill their container and maintain aspect ratio */
+.overlay-svg svg, .overlay-svg img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    box-sizing: border-box;
+    margin: auto;
+    object-fit: contain; /* Đảm bảo SVG vừa khung mà không bị cắt */
+}
+
+#singleOutlinesWrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    height: 100%;
+}
+
+/* Các overlay-svg bên trong singleOutlinesWrap cần là relative để nằm cạnh nhau */
+#singleOutlinesWrap .overlay-svg {
+    position: relative;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#outlinesWrap {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+/*container cho front và side profiles */
+#outlinesWrap .front-container,
+#outlinesWrap .side-container {
+    position: relative; 
+    width: 48%; 
+    height: 100%;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+#outlinesWrap .overlay-svg {
+    position: absolute; /*absolute để chồng lên nhau */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    border: 1px solid #444;
+    background-color: #2b2b2b;
+    color: #f0f0f0;
+}
+.card .small {
+    color: #e0e0e0;
+}
+
+.card .small span {
+    color: #ffffff; 
+    font-weight: bold; 
+}
+
+/* Styling cho các mục gợi ý trong searchbox */
+.list-group-item {
+    border-color: #333;
+    background-color: #2b2b2b;
+    color: #e0e0e0;
+}
+
+.list-group-item span {
+    color: #ffffff;
+}
+
+/* hover lên mục gợi ý */
+.list-group-item:hover {
+    background-color: #3a3a3a;
+    cursor: pointer;
+}
+
+.badge-new {
+    background-color: #0d6efd;
+    color: white;
+    padding: 0.25em 0.5em;
+    border-radius: 0.25rem;
+    font-size: 0.75em;
+}
+
+/* Legend column styling in compare view */
+#legendCol .rounded {
+    border-width: 2px !important;
+    background-color: #2b2b2b !important;
+}
+
+/* Button close in legend */
+#legendCol .btn-close {
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    opacity: 0.8;
+}
+#legendCol .btn-close:hover {
+    opacity: 1;
+}
+
+/* Table styling */
+.table th, .table td {
+    border-color: #444 !important;
+}
+.table-dark thead th {
+    background-color: #333 !important;
+    color: #f0f0f0 !important;
+}
+.table-dark tbody tr:nth-of-type(odd) {
+    background-color: #2b2b2b;
+}
+.table-dark tbody tr:nth-of-type(even) {
+    background-color: #2f2f2f;
+}
+
+.table-dark tbody {
+    color: #e0e0e0; /* Màu chữ mặc định cho tbody */
+}

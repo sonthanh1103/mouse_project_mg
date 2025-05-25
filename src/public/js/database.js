@@ -114,7 +114,7 @@ $(function () {
         opts.forEach(opt => {
           checkWrap.append(`
             <div class="form-check form-check-inline">
-              <input class="form-check-input filter-check" type="checkbox" data-field="${field}" data-value="${opt}" id="chk_${field}_${opt}">
+              <input class="form-check-input filter-check text" type="checkbox" data-field="${field}" data-value="${opt}" id="chk_${field}_${opt}">
               <label class="form-check-label small" for="chk_${field}_${opt}">${opt}</label>
             </div>
           `);

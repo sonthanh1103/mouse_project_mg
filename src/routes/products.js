@@ -14,14 +14,14 @@ const router = express.Router();
 router.get('/api/product/lookup', lookupController.getProductLookUp); // get all ref fields data
 
 // product
-router.get('/product',                  isAuthenticated, productController.productPage)    // render view Product Page
-router.get('/api/product/get',                           productController.getProducts);   // get Products
-router.post('/api/product/create',      isAuthenticated, productController.createProduct); // post
-router.put('/api/product/update/:id',   isAuthenticated, productController.updateProduct); // post
-router.post('/api/product/delete',      isAuthenticated, productController.delProducts);   // post
+router.get('/product',                  isAuthenticated, productController.productPage)      // render view Product Page
+router.get('/api/product/get',                           productController.getProducts);     // get Products
+router.post('/api/product/create',      isAuthenticated, productController.createProduct);   // post
+router.put('/api/product/update/:id',   isAuthenticated, productController.updateProduct);   // post
+router.post('/api/product/delete',      isAuthenticated, productController.delProducts);     // post
 router.post('/api/product/compare',                      productController.compareProducts); // compare products
-router.get('/api/product/search',                      productController.compareProducts); // compare products
-router.get('/api/product/suggested', productController.getSuggestedProducts);
+router.get('/api/product/search',                        productController.searchProducts); 
+router.get('/api/product/suggested',                     productController.getSuggestedProducts);
 
 // brand
 router.get('/brand',                    isAuthenticated, brandController.brandPage);

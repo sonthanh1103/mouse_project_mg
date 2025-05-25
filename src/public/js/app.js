@@ -39,6 +39,8 @@ function formatDate(dateString) {
   return `${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}`;
 }
 
+
+// debounce
 function debounce(fn, delay) {
   let timeoutId;
   return function (...args) {
@@ -47,9 +49,15 @@ function debounce(fn, delay) {
   };
 }
 
+// CapitalizeFirst
 function capitalizeFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+  // Generate a random hex color
+  function getRandomColor() {
+    return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+  }
 
 function renderPagination(pagination, searchParam = '') {
   const { currentPage, perPage, totalPages } = pagination;

@@ -101,72 +101,73 @@ export const delProducts = async (req, res) => {
   }
 };
 
-// POST /api/product/compare — Compare endpoint
-export const compareProducts = async (req, res) => {
+export const searchProducts = async (req, res) => {
   try {
-    const { productIds } = req.body;
-    if (!Array.isArray(productIds) || productIds.length < 1) {
-      return responseHelper.error(res, 'Provide at least one product ID', 400);
+    const q = (req.query.q || '').trim();
+
+    if (!q) {
+      return responseHelper.success(res, []);
     }
 
-    // Validate each as ObjectId
-    const validIds = productIds.filter(id => mongoose.Types.ObjectId.isValid(id));
-    if (validIds.length !== productIds.length) {
-      return responseHelper.error(res, 'Invalid product IDs provided', 400);
-    }
+    const regex = new RegExp(q, 'i');
 
-    // Fetch products along with references
-    const products = await Product.find({ _id: { $in: validIds } })
-      .populate('brand material front_flare side_curvature sensor')
-      .lean();
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: regex } },
+      ]
+    })
+    .populate('brand')
+    .lean();
 
-    if (products.length === 0) {
-      return responseHelper.error(res, 'No products found', 404);
-    }
+    const filtered = products.filter(p =>
+      regex.test(p.name) || (p.brand && regex.test(p.brand.name))
+    )
 
-    return responseHelper.success(res, products);
+    return responseHelper.success(res, filtered);
   } catch (err) {
+    console.error('[searchProducts] ERROR:', err.stack);
     return responseHelper.error(res, err.message);
   }
 };
 
-export const searchProducts = async (req, res) => {
+export const getSuggestedProducts = async (req, res) => {
   try {
-  const q = req.query.q || '';
-  if (!q) return res.json([]);
-  const regex = new RegExp(q, 'i');
-  const products = await Product.aggregate([
-    {
-      $lookup: {
-        from: 'brands',
-        localField: 'brand',
-        foreignField: '_id',
-        as: 'brand'
-      }
-    },
-    { $unwind: '$brand' },
-    {
-      $match: {
-        $or: [
-          { name: { $regex: regex } },
-          { 'brand.name': { $regex: regex } }
-        ]
-      }
-    },
-    { $limit: 20 }
-  ]);
-    responseHelper.success(res, products);
+    const products = await Product.find({})
+      .populate('brand material front_flare side_curvature sensor')
+      .sort({ createdAt: -1 })
+      .lean();
+    return responseHelper.success(res, products);
   } catch (err) {
-    responseHelper.error(res, err.message);
+    console.error('[getSuggestedProducts] ERROR:', err.stack);
+    return responseHelper.error(res, err.message);
   }
 };
 
-export const getSuggestedProducts = async (req, res) => {
-  const limit = parseInt(req.query.limit, 10) || 9;
-  const products = await Product.find({})
-    .populate('material brand front_flare side_curvature sensor')
-    .sort({ createdAt: -1 })
-    .limit(limit)
-    .lean();
-  responseHelper.success(res, products);
+export const compareProducts = async (req, res) => {
+  try {
+    const productIds = Array.isArray(req.body?.productIds)
+      ? req.body.productIds
+      : [];
+
+    if (productIds.length < 1) {
+      return responseHelper.error(res, 'Provide at least one product ID', 400);
+    }
+
+    const validIds = productIds.filter(id => mongoose.Types.ObjectId.isValid(id));
+    if (!validIds.length) {
+      return responseHelper.error(res, 'Invalid product IDs provided', 400);
+    }
+
+    const products = await Product.find({ _id: { $in: validIds } })
+      .populate('brand material front_flare side_curvature sensor')
+      .lean();
+
+    if (!products.length) {
+      return responseHelper.error(res, 'No products found', 404);
+    }
+    return responseHelper.success(res, products);
+  } catch (err) {
+    console.error('[compareProducts] ERROR:', err.stack);
+    return responseHelper.error(res, err.message);
+  }
 };
