@@ -1,12 +1,12 @@
 import express from 'express';
-import connectDB from '../config/db.js';
+import connectDB from './config/db.js';
 import cors from 'cors';
 import path from 'path';
 import ejs from 'ejs';
 import { fileURLToPath } from 'url';
-import constants from '../config/constants.js';
+import constants from './config/constants.js';
 import router from './routes/routes.js';
-import passport from '../config/passport.js';
+import passport from './config/passport.js';
 import session from 'express-session';
 import MongoStore from "connect-mongo";
 import dotenv from 'dotenv';

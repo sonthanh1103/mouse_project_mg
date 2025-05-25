@@ -1,6 +1,6 @@
 import mailer from '../helpers/mailer.js'
 import crypto from 'crypto';
-import SMTP from "../../config/smtp.js";
+import SMTP from "../config/smtp.js";
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import passport from "passport";

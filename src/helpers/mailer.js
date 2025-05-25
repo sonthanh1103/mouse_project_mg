@@ -1,4 +1,4 @@
-import SMTP from "../../config/smtp.js";
+import SMTP from "../config/smtp.js";
 import nodemailer from 'nodemailer';
 
 const mailer = nodemailer.createTransport({

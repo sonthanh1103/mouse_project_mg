@@ -51,13 +51,16 @@ function debounce(fn, delay) {
 
 // CapitalizeFirst
 function capitalizeFirst(str) {
+  if (str.toLowerCase() === 'dpi') {
+    return 'DPI';
+  }
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-  // Generate a random hex color
-  function getRandomColor() {
-    return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
-  }
+// Generate a random hex color
+function getRandomColor() {
+  return '#' + Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6, '0'); 
+}
 
 function renderPagination(pagination, searchParam = '') {
   const { currentPage, perPage, totalPages } = pagination;
