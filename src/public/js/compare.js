@@ -1,10 +1,10 @@
 $(function () {
   const FIELDS = [
-    "length","width","height","weight","shape","hump_placement",
-    "front_flare","side_curvature","hand_compatibility","thumb_rest",
-    "ring_finger_rest","material","connectivity","sensor",
-    "sensor_technology","sensor_position","dpi","polling_rate",
-    "tracking_speed","acceleration","side_buttons","middle_buttons",
+    "length", "width", "height", "weight", "shape", "hump_placement",
+    "front_flare", "side_curvature", "hand_compatibility", "thumb_rest",
+    "ring_finger_rest", "material", "connectivity", "sensor",
+    "sensor_technology", "sensor_position", "dpi", "polling_rate",
+    "tracking_speed", "acceleration", "side_buttons", "middle_buttons",
   ];
 
   const $searchBox = $("#searchBox");
@@ -28,17 +28,17 @@ $(function () {
            style="color: ${color}; border: 2px solid ${color};" data-id="${p._id}">
         <div class="color-dot me-2" style="background-color: ${color}; width:12px; height:12px; border-radius:50%;"></div>
         <div class="flex-grow-1 text-start">
-          <span>${p.brand?.name||''}</span><br>
+          <span>${p.brand?.name || ''}</span><br>
           <small>${p.name}</small><br>
-          <small>${p.length||'-'} * ${p.width||'-'} * ${p.height||'-'} mm ${p.weight||'-'}g</small>
+          <small>${p.length || '-'} * ${p.width || '-'} * ${p.height || '-'} mm ${p.weight || '-'}g</small>
         </div>
         <button type="button" class="btn-close ms-2"></button>
       </div>
     `;
   }
 
-  // Create styled SVG wrapper
-  function createStyledSvgWrapper(rawSvgContent, color) {
+  // Create styled SVG wrapper with data-id
+  function createStyledSvgWrapper(rawSvgContent, color, id) {
     let contentHtml = '';
     if (!rawSvgContent || rawSvgContent.trim() === '') {
       contentHtml = '<div class="no-svg-placeholder text-muted small text-center w-100 h-100 d-flex align-items-center justify-content-center"></div>';
@@ -47,12 +47,9 @@ $(function () {
       if ($svgElement.length) {
         $svgElement.attr({
           preserveAspectRatio: 'xMidYMid meet', width: '100%', height: '100%',
-          stroke: color, 'stroke-width': 2, fill: 'none'
+          stroke: color, 'stroke-width': 5, fill: 'none'
         }).css({ display: 'block', margin: 'auto', 'max-width': '100%', 'max-height': '100%', 'object-fit': 'contain' });
-
-        // Set circle fill color to match stroke color
         $svgElement.find('circle').attr('fill', color);
-
         contentHtml = $('<div>').append($svgElement).html();
       } else if (/^(https?:\/\/|\/)\S+/.test(rawSvgContent)) {
         contentHtml = `<img src="${rawSvgContent}" alt="Mouse image" style="width:100%; height:100%; object-fit:contain;">`;
@@ -60,7 +57,8 @@ $(function () {
         contentHtml = '<div class="no-svg-placeholder text-muted small text-center w-100 h-100 d-flex align-items-center justify-content-center">Invalid SVG</div>';
       }
     }
-    return `<div class="overlay-svg">${contentHtml}</div>`;
+    // Thêm transition cho opacity để hiệu ứng mờ mượt mà hơn cho overlay-svg
+    return `<div class="overlay-svg" data-id="${id}" style="transition:opacity 0.2s ease;">${contentHtml}</div>`;
   }
 
   // Load all products
@@ -118,13 +116,15 @@ $(function () {
         : '';
       const thumbHtml = thumbContent ? `<div class="svg-thumb" style="width:50px; height:50px;">${thumbContent}</div>` : '';
       const brand = p.brand?.name || '';
+      // Thêm transition cho opacity của card để hiệu ứng mờ mượt mà hơn cho brand+name
       $miceDisplay.append(
-        `<div class="card p-2 m-2 text-center" data-id="${p._id}" style="width:120px; ${isClickable ? 'cursor:pointer;' : ''}">` +
+        `<div class="card p-2 m-2 text-center" data-id="${p._id}" style="width:120px; ${isClickable ? 'cursor:pointer;' : ''} transition: opacity 0.2s ease;">` +
         `${thumbHtml}<div class="small text-truncate mt-1">${brand}<br><strong>${p.name}</strong></div>` +
         `</div>`
       );
     });
-    $miceDisplay.off("click", ".card");
+    $miceDisplay.off("click mouseenter mouseleave", ".card"); // Gỡ bỏ các sự kiện cũ để tránh trùng lặp
+
     if (isClickable) {
       $miceDisplay.on("click", ".card", function () {
         const id = $(this).data("id");
@@ -148,26 +148,24 @@ $(function () {
 
       compareList.forEach(id => { if (!colorMap[id]) colorMap[id] = getRandomColor(); });
       const selected = allProducts.filter(p => compareList.includes(p._id));
-      renderMiceDisplay(selected, false);
+      renderMiceDisplay(selected, false); // Khi ở chế độ so sánh, bạn có thể muốn xử lý hiệu ứng hover khác
 
       loadCompare(compareList).done(products => {
-        // Render outlines
         $outlinesWrap.empty();
         const $front = $('<div class="front-container"></div>');
-        const $side  = $('<div class="side-container"></div>');
+        const $side = $('<div class="side-container"></div>');
         products.forEach(p => {
           const color = colorMap[p._id];
-          $front.append($(createStyledSvgWrapper(p.svg1, color)));
-          $side.append($(createStyledSvgWrapper(p.svg2 || p.svgOutline, color)));
+          $front.append($(createStyledSvgWrapper(p.svg1, color, p._id)));
+          $side.append($(createStyledSvgWrapper(p.svg2 || p.svgOutline, color, p._id)));
         });
         $outlinesWrap.append($front, $side);
 
-        // Render comparison table
         let thead = `<thead class="table-dark"><tr><th></th>`;
-        products.forEach(p => thead += `<th>${p.brand?.name||''}<br><small>${p.name}</small></th>`);
+        products.forEach(p => thead += `<th>${p.brand?.name || ''}<br><small>${p.name}</small></th>`);
         thead += `</tr></thead>`;
         const base = products[0];
-        const pct = (b, v) => (typeof b==='number' && typeof v==='number' && b ? ((v-b)/b*100).toFixed(0)+'%' : '');
+        const pct = (b, v) => (typeof b === 'number' && typeof v === 'number' && b ? ((v - b) / b * 100).toFixed(0) + '%' : '');
         let tbody = '<tbody>';
         FIELDS.forEach(f => {
           tbody += `<tr><th>${capitalizeFirst(f.replace(/_/g, ' '))}</th>`;
@@ -179,7 +177,7 @@ $(function () {
             let diff = '';
             if (j > 0) {
               const d = pct(base[f], p[f]);
-              if (d) diff = ` <small class="${d.startsWith('-')?'text-danger':'text-success'}">(${d})</small>`;
+              if (d) diff = ` <small class="${d.startsWith('-') ? 'text-danger' : 'text-success'}">(${d})</small>`;
             }
             tbody += `<td>${val}${diff}</td>`;
           });
@@ -188,8 +186,7 @@ $(function () {
         tbody += '</tbody>';
         $compareTable.html(thead + tbody).addClass('table-dark');
 
-        // Update legend
-        $legendCol.find('.legend-item').each(function() {
+        $legendCol.find('.legend-item').each(function () {
           const id = $(this).data('id');
           if (!compareList.includes(id)) $(this).remove();
         });
@@ -211,6 +208,26 @@ $(function () {
       dataType: "json",
     }).then(res => res.success ? res.data : []).fail(() => []);
   }
+
+  $legendCol.on("mouseenter", ".legend-item", function() {
+    const id = $(this).data("id");
+
+    // 1. Làm mờ các legend-item khác
+    $legendCol.find(".legend-item").css("opacity", "0.4");
+    $(this).css("opacity", "1");
+
+    // 2. Làm mờ các outline SVG khác
+    $outlinesWrap.find(".overlay-svg").css("opacity", "0.2");
+    $outlinesWrap.find(`.overlay-svg[data-id="${id}"]`).css("opacity", "1");
+  });
+
+  $legendCol.on("mouseleave", ".legend-item", function() {
+    // 1. Trả lại độ trong suốt cho tất cả các legend-item
+    $legendCol.find(".legend-item").css("opacity", "1");
+
+    // 2. Trả lại độ trong suốt cho tất cả các outline SVG
+    $outlinesWrap.find(".overlay-svg").css("opacity", "1");
+  });
 
   $legendCol.on("click", ".btn-close", function () {
     const id = $(this).closest(".legend-item").data("id");

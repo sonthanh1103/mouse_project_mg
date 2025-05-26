@@ -62,12 +62,12 @@ function capitalizeFirst(str) {
 //   return '#' + Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6, '0');
 // }
 function getRandomColor() {
-  const r = Math.floor(200 + Math.random() * 55); // 200–255
-  const g = Math.floor(200 + Math.random() * 55); // 200–255
-  const b = Math.floor(200 + Math.random() * 55); // 200–255
-  return '#' + [r, g, b]
-    .map(x => x.toString(16).padStart(2, '0'))
-    .join('');
+  // Tính hue mới
+  _lastHue = ((Math.random() * 360) +  137.508) % 360;
+  // Chọn saturation 70–90% và lightness 55–65% để màu tươi
+  const saturation = 90; 
+  const lightness  = 55;
+  return `hsl(${Math.round(_lastHue)}, ${saturation}%, ${lightness}%)`;
 }
 
 function renderPagination(pagination, searchParam = '') {
