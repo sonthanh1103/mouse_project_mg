@@ -20,12 +20,13 @@ $(function () {
   let initialCards = [];
   let compareList = [];
   const colorMap = {};
+  const MAX_COMPARE_ITEMS = 5; // Giới hạn tối đa 5 sản phẩm
 
   // Helper: render a legend item
   function renderLegendItem(p, color) {
     return `
       <div class="legend-item d-flex align-items-center bg-dark p-2 mb-2 rounded" 
-           style="color: ${color}; border: 2px solid ${color};" data-id="${p._id}">
+           style="color: ${color}; border: 2px solid ${color}; transition: opacity 0.2s ease;" data-id="${p._id}">
         <div class="color-dot me-2" style="background-color: ${color}; width:12px; height:12px; border-radius:50%;"></div>
         <div class="flex-grow-1 text-start">
           <span>${p.brand?.name || ''}</span><br>
@@ -102,7 +103,12 @@ $(function () {
 
   $searchSuggestions.on("click", ".list-group-item", function () {
     const id = $(this).data("id");
-    if (!compareList.includes(id)) compareList.push(id);
+    if (!compareList.includes(id)) { // Chỉ thêm nếu chưa có trong danh sách
+      if (compareList.length >= MAX_COMPARE_ITEMS) {
+        compareList.shift(); // Xóa phần tử đầu tiên
+      }
+      compareList.push(id); // Thêm phần tử mới vào cuối
+    }
     $searchBox.val("");
     $searchSuggestions.hide();
     updateCompareView();
@@ -116,19 +122,24 @@ $(function () {
         : '';
       const thumbHtml = thumbContent ? `<div class="svg-thumb" style="width:50px; height:50px;">${thumbContent}</div>` : '';
       const brand = p.brand?.name || '';
-      // Thêm transition cho opacity của card để hiệu ứng mờ mượt mà hơn cho brand+name
+      // transition cho opacity
       $miceDisplay.append(
         `<div class="card p-2 m-2 text-center" data-id="${p._id}" style="width:120px; ${isClickable ? 'cursor:pointer;' : ''} transition: opacity 0.2s ease;">` +
         `${thumbHtml}<div class="small text-truncate mt-1">${brand}<br><strong>${p.name}</strong></div>` +
         `</div>`
       );
     });
-    $miceDisplay.off("click mouseenter mouseleave", ".card"); // Gỡ bỏ các sự kiện cũ để tránh trùng lặp
+    $miceDisplay.off("click mouseenter mouseleave", ".card"); // Gỡ bỏ các sự kiện cũ
 
     if (isClickable) {
       $miceDisplay.on("click", ".card", function () {
         const id = $(this).data("id");
-        if (!compareList.includes(id)) compareList.push(id);
+        if (!compareList.includes(id)) {
+          if (compareList.length >= MAX_COMPARE_ITEMS) {
+            compareList.shift(); // Xóa phần tử đầu tiên
+          }
+          compareList.push(id); // Thêm phần tử mới vào cuối
+        }
         updateCompareView();
       });
     }
@@ -148,7 +159,7 @@ $(function () {
 
       compareList.forEach(id => { if (!colorMap[id]) colorMap[id] = getRandomColor(); });
       const selected = allProducts.filter(p => compareList.includes(p._id));
-      renderMiceDisplay(selected, false); // Khi ở chế độ so sánh, bạn có thể muốn xử lý hiệu ứng hover khác
+      renderMiceDisplay(selected, false);
 
       loadCompare(compareList).done(products => {
         $outlinesWrap.empty();
@@ -186,15 +197,22 @@ $(function () {
         tbody += '</tbody>';
         $compareTable.html(thead + tbody).addClass('table-dark');
 
+        // Xóa các item không còn trong compareList
         $legendCol.find('.legend-item').each(function () {
           const id = $(this).data('id');
-          if (!compareList.includes(id)) $(this).remove();
+          if (!compareList.includes(id)) {
+            $(this).remove();
+          }
         });
+        // Thêm các item mới vào legendCol
         products.forEach(p => {
           if ($legendCol.find(`[data-id="${p._id}"]`).length === 0) {
             $legendCol.append(renderLegendItem(p, colorMap[p._id]));
           }
         });
+        // Sắp xếp lại các legend items để khớp với thứ tự trong compareList
+        const sortedLegendItems = compareList.map(id => $legendCol.find(`.legend-item[data-id="${id}"]`).get(0));
+        $legendCol.empty().append(sortedLegendItems);
       });
     }
   }
@@ -209,6 +227,7 @@ $(function () {
     }).then(res => res.success ? res.data : []).fail(() => []);
   }
 
+  // Bắt sự kiện hover trên các legend-item trong $legendCol
   $legendCol.on("mouseenter", ".legend-item", function() {
     const id = $(this).data("id");
 
