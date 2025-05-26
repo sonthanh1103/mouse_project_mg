@@ -1,8 +1,4 @@
-import Brand from '../models/brand.js';
-import Material from '../models/material.js';
-import FrontFlare from '../models/frontFlare.js';
-import SideCurvature from '../models/sideCurvature.js';
-import Sensor from '../models/sensor.js';
+import { Brand, Material, FrontFlare, SideCurvature, Sensor} from '../models/index.js';
 import responseHelper from '../helpers/responseHelper.js';
 
 export const getProductLookUp = async (req, res) => {

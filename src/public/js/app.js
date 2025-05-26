@@ -57,12 +57,8 @@ function capitalizeFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Generate a random hex color
-// function getRandomColor() {
-//   return '#' + Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6, '0');
-// }
 function getRandomColor() {
-  // Tính hue mới
+  
   _lastHue = ((Math.random() * 360) +  137.508) % 360;
   // Chọn saturation 70–90% và lightness 55–65% để màu tươi
   const saturation = 90; 

@@ -1,24 +1,48 @@
-/* General styling for SVG display */
-.svg-thumb {
-    width: 80px;
-    height: 80px;
+:root {
+    --bg-dark: #1f1f1f;
+    --bg-dark-2: #2b2b2b;
+    --bg-dark-3: #2f2f2f;
+    --bg-primary: #0d6efd;
+    --border-dark: #444;
+    --border-light: #333;
+    --text-white: #e0e0e0;
+    --text-placeholder: #acaaaa;
+    --hover-bg: #3a3a3a;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.flex-center {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
 }
 
-/* Base styling for any SVG directly inside .overlay-svg */
-/* This ensures SVGs fill their container and maintain aspect ratio */
-.overlay-svg svg, .overlay-svg img {
+/* ========== SVG THUMB DISPLAY =========== */
+
+.svg-thumb {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ensure SVGs scale properly */
+.overlay-svg svg,
+.overlay-svg img {
     display: block;
     width: 100%;
     height: 100%;
     max-width: 100%;
     max-height: 100%;
-    box-sizing: border-box;
     margin: auto;
-    object-fit: contain; /* Đảm bảo SVG vừa khung mà không bị cắt */
+    object-fit: contain;
 }
 
 #singleOutlinesWrap {
@@ -29,7 +53,6 @@
     height: 100%;
 }
 
-/* Các overlay-svg bên trong singleOutlinesWrap cần là relative để nằm cạnh nhau */
 #singleOutlinesWrap .overlay-svg {
     position: relative;
     width: 50%;
@@ -38,6 +61,8 @@
     justify-content: center;
     align-items: center;
 }
+
+/* ========= COMPARE PROFILE WRAP ========= */
 
 #outlinesWrap {
     display: flex;
@@ -48,20 +73,18 @@
     position: relative;
 }
 
-/*container cho front và side profiles */
 #outlinesWrap .front-container,
 #outlinesWrap .side-container {
-    position: relative; 
-    width: 48%; 
+    position: relative;
+    width: 48%;
     height: 100%;
-    display: flex; 
+    display: flex;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
 }
 
 #outlinesWrap .overlay-svg {
-    position: absolute; /*absolute để chồng lên nhau */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -71,90 +94,138 @@
     justify-content: center;
 }
 
+/* ================= CARD ================= */
 .card {
-    border: 1px solid #444;
-    background-color: #2b2b2b;
-    color: #f0f0f0;
+    border: 1px solid var(--border-dark);
+    background-color: var(--bg-dark-2);
+    color: var(--text-white);
 }
-.card .small {
-    color: #e0e0e0;
+
+.card .small,
+.card .small span {
+    color: var(--text-white);
 }
 
 .card .small span {
-    color: #ffffff; 
-    font-weight: bold; 
+    font-weight: bold;
 }
 
-/* Styling cho các mục gợi ý trong searchbox */
+/* ========== SEARCH SUGGESTION =========== */
+
+.search-suggestion {
+    position: absolute;
+    width: 100%;
+    max-height: 300px;
+    overflow: auto;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-dark);
+    border-radius: 4px;
+    z-index: 1000;
+    display: none;
+}
+
+/* Gợi ý trong searchbox */
 .list-group-item {
-    border-color: #333;
-    background-color: #2b2b2b;
-    color: #e0e0e0;
+    border-color: var(--border-light);
+    background-color: var(--bg-dark-2);
+    color: var(--text-white);
 }
 
 .list-group-item span {
-    color: #ffffff;
+    color: var(--text-white);
 }
 
-/* hover lên mục gợi ý */
 .list-group-item:hover {
-    background-color: #3a3a3a;
+    background-color: var(--hover-bg);
     cursor: pointer;
 }
 
+.list-group-item.selected {
+    opacity: 0.5;
+}
+
+/* Placeholder cho input search */
+#searchBox::placeholder {
+    color: var(--text-placeholder);
+    opacity: 1;
+}
+
+/* ================ BADGE ================= */
 .badge-new {
-    background-color: #0d6efd;
-    color: white;
+    background-color: var(--bg-primary);
+    color: var(--text-white);
     padding: 0.25em 0.5em;
     border-radius: 0.25rem;
     font-size: 0.75em;
 }
 
-/* Legend column styling in compare view */
+/* ============== LEGEND ================== */
+
 #legendCol .rounded {
     border-width: 2px !important;
-    background-color: #2b2b2b !important;
+    background-color: var(--bg-dark-2) !important;
 }
 
-/* Button close in legend */
 #legendCol .btn-close {
-    background-color: #f0f0f0;
+    background-color: var(--text-white);
     border-radius: 50%;
-    opacity: 0.8;
+    opacity: 0.6;
 }
+
 #legendCol .btn-close:hover {
     opacity: 1;
 }
 
-/* Table styling */
-.table th, .table td {
-    border-color: #444 !important;
+/* =============== TABLE ================== */
+.table th,
+.table td {
+    border-color: var(--border-dark) !important;
 }
+
 .table-dark thead th {
-    background-color: #333 !important;
-    color: #f0f0f0 !important;
-}
-.table-dark tbody tr:nth-of-type(odd) {
-    background-color: #2b2b2b;
-}
-.table-dark tbody tr:nth-of-type(even) {
-    background-color: #2f2f2f;
+    background-color: var(--border-light) !important;
+    color: var(--text-white) !important;
 }
 
 .table-dark tbody {
-    color: #e0e0e0; /* Màu chữ mặc định cho tbody */
+    color: var(--text-white);
 }
+
+.table-dark tbody tr:nth-of-type(odd) {
+    background-color: var(--bg-dark-2);
+}
+
+.table-dark tbody tr:nth-of-type(even) {
+    background-color: var(--bg-dark-3);
+}
+
+/* ============== COLOR DOT =============== */
 
 .color-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%; /* Để làm tròn */
-    flex-shrink: 0; /* Đảm bảo không bị co lại trong flexbox */
-    margin-right: 8px; /* Khoảng cách với chữ */
+    width: 24px;
+    height: 60px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-right: 8px;
     border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: currentColor;
 }
 
-#searchBox::placeholder {
-    color: rgb(172, 170, 170);
-    opacity: 1;
-  }
+/* ============== RESET BTN =============== */
+#resetButton {
+    color: #fff;
+    top: 1px;
+    right: 1px;
+    height: calc(100% - 2px);
+    position: absolute;
+}
+/* ============== OTHERS =============== */
+.obj-fit {
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.wh-50 { width:50px; height:50px; }
+
+.transition { transition:opacity 0.2s ease; }

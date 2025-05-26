@@ -15,6 +15,7 @@ $(function () {
   const $legendCol = $("#legendCol");
   const $outlinesWrap = $("#outlinesWrap");
   const $compareTable = $("#compareTable");
+  const $resetButton = $("#resetButton");
 
   let allProducts = [];
   let initialCards = [];
@@ -27,7 +28,7 @@ $(function () {
     return `
       <div class="legend-item d-flex align-items-center bg-dark p-2 mb-2 rounded" 
            style="color: ${color}; border: 2px solid ${color}; transition: opacity 0.2s ease;" data-id="${p._id}">
-        <div class="color-dot me-2" style="background-color: ${color}; width:12px; height:12px; border-radius:50%;"></div>
+        <div class="color-dot me-2" style="background-color: ${color}"></div>
         <div class="flex-grow-1 text-start">
           <span>${p.brand?.name || ''}</span><br>
           <small>${p.name}</small><br>
@@ -42,7 +43,7 @@ $(function () {
   function createStyledSvgWrapper(rawSvgContent, color, id) {
     let contentHtml = '';
     if (!rawSvgContent || rawSvgContent.trim() === '') {
-      contentHtml = '<div class="no-svg-placeholder text-muted small text-center w-100 h-100 d-flex align-items-center justify-content-center"></div>';
+      contentHtml = '<div class="text-muted small text-center w-100 h-100 d-flex align-items-center justify-content-center"></div>';
     } else {
       const $svgElement = $(rawSvgContent).filter('svg');
       if ($svgElement.length) {
@@ -53,13 +54,12 @@ $(function () {
         $svgElement.find('circle').attr('fill', color);
         contentHtml = $('<div>').append($svgElement).html();
       } else if (/^(https?:\/\/|\/)\S+/.test(rawSvgContent)) {
-        contentHtml = `<img src="${rawSvgContent}" alt="Mouse image" style="width:100%; height:100%; object-fit:contain;">`;
+        contentHtml = `<img src="${rawSvgContent}" alt="Mouse image" class="obj-fit">`;
       } else {
-        contentHtml = '<div class="no-svg-placeholder text-muted small text-center w-100 h-100 d-flex align-items-center justify-content-center">Invalid SVG</div>';
+        contentHtml = '<div class="text-muted small text-center w-100 h-100 d-flex align-items-center justify-content-center">Invalid SVG</div>';
       }
     }
-    // Thêm transition cho opacity để hiệu ứng mờ mượt mà hơn cho overlay-svg
-    return `<div class="overlay-svg" data-id="${id}" style="transition:opacity 0.2s ease;">${contentHtml}</div>`;
+    return `<div class="overlay-svg" data-id="${id}" class="transition">${contentHtml}</div>`;
   }
 
   // Load all products
@@ -88,39 +88,48 @@ $(function () {
   $searchBox.on("focus", () => { renderDropdown(allProducts); $searchSuggestions.show(); });
 
   function renderDropdown(items) {
-    $searchSuggestions.empty();
-    if (!items.length) return $searchSuggestions.append('<div class="list-group-item text-muted">No results</div>');
-    items.forEach(p => {
+     $searchSuggestions.empty();
+     if (!items.length) return $searchSuggestions.append('<div class="list-group-item text-muted">No results</div>');
+    
+     items.forEach(p => {
       const brandName = p.brand?.name || '';
       const badge = p.isNew ? '<span class="badge-new">NEW</span>' : '';
+      const isSelected = compareList.includes(p._id) ? 'selected' : '';
+    
       $searchSuggestions.append(
-        `<div class="list-group-item d-flex align-items-center justify-content-between" data-id="${p._id}">` +
-        `<div class="d-flex align-items-center">${brandName ? `<span>${brandName}</span>&nbsp;` : ''}${p.name}</div>${badge}` +
-        `</div>`
+       `<div class="list-group-item d-flex align-items-center justify-content-between ${isSelected}" data-id="${p._id}">` +
+       `<div class="d-flex align-items-center">${brandName ? `<span>${brandName}</span>&nbsp;` : ''}${p.name}</div>${badge}` +
+       `</div>`
       );
-    });
-  }
-
+     });
+    }
+    
   $searchSuggestions.on("click", ".list-group-item", function () {
     const id = $(this).data("id");
-    if (!compareList.includes(id)) { // Chỉ thêm nếu chưa có trong danh sách
+
+     // Nếu sản phẩm đã được chọn → bỏ khỏi compareList
+     if (compareList.includes(id)) {
+        compareList = compareList.filter(item => item !== id);
+      } else {
+        // Nếu chưa chọn và đã đủ số lượng thì xóa sản phẩm đầu tiên
       if (compareList.length >= MAX_COMPARE_ITEMS) {
-        compareList.shift(); // Xóa phần tử đầu tiên
+      compareList.shift();
       }
-      compareList.push(id); // Thêm phần tử mới vào cuối
-    }
-    $searchBox.val("");
-    $searchSuggestions.hide();
-    updateCompareView();
-  });
+      compareList.push(id);
+     }
+    
+     $searchBox.val("");
+     $searchSuggestions.hide();
+     updateCompareView();
+    });
 
   function renderMiceDisplay(items, isClickable = true) {
     $miceDisplay.empty();
     items.forEach(p => {
       const thumbContent = !isClickable && p.svg1
-        ? (p.svg1.trim().startsWith('<svg') ? p.svg1 : `<img src="${p.svg1}" alt="Mouse image" style="width:100%; height:100%; object-fit:contain;">`)
+        ? (p.svg1.trim().startsWith('<svg') ? p.svg1 : `<img src="${p.svg1}" alt="Mouse image" class="obj-fit">`)
         : '';
-      const thumbHtml = thumbContent ? `<div class="svg-thumb" style="width:50px; height:50px;">${thumbContent}</div>` : '';
+      const thumbHtml = thumbContent ? `<div class="svg-thumb wh-50">${thumbContent}</div>` : '';
       const brand = p.brand?.name || '';
       // transition cho opacity
       $miceDisplay.append(
@@ -168,7 +177,7 @@ $(function () {
         products.forEach(p => {
           const color = colorMap[p._id];
           $front.append($(createStyledSvgWrapper(p.svg1, color, p._id)));
-          $side.append($(createStyledSvgWrapper(p.svg2 || p.svgOutline, color, p._id)));
+          $side.append($(createStyledSvgWrapper(p.svg2, color, p._id)));
         });
         $outlinesWrap.append($front, $side);
 
@@ -227,7 +236,7 @@ $(function () {
     }).then(res => res.success ? res.data : []).fail(() => []);
   }
 
-  // Bắt sự kiện hover trên các legend-item trong $legendCol
+  //Sự kiện hover trên các legend-item trong $legendCol
   $legendCol.on("mouseenter", ".legend-item", function() {
     const id = $(this).data("id");
 
@@ -236,21 +245,27 @@ $(function () {
     $(this).css("opacity", "1");
 
     // 2. Làm mờ các outline SVG khác
-    $outlinesWrap.find(".overlay-svg").css("opacity", "0.2");
+    $outlinesWrap.find(".overlay-svg").css("opacity", "0.1");
     $outlinesWrap.find(`.overlay-svg[data-id="${id}"]`).css("opacity", "1");
   });
 
   $legendCol.on("mouseleave", ".legend-item", function() {
-    // 1. Trả lại độ trong suốt cho tất cả các legend-item
+    // Trả lại độ trong suốt cho tất cả các legend-item
     $legendCol.find(".legend-item").css("opacity", "1");
 
-    // 2. Trả lại độ trong suốt cho tất cả các outline SVG
+    //Trả lại độ trong suốt cho tất cả các outline SVG
     $outlinesWrap.find(".overlay-svg").css("opacity", "1");
   });
 
   $legendCol.on("click", ".btn-close", function () {
     const id = $(this).closest(".legend-item").data("id");
     compareList = compareList.filter(item => item !== id);
+    updateCompareView();
+  });
+
+  $resetButton.on("click", function() {
+    compareList = [];
+    $searchBox.val("");
     updateCompareView();
   });
 });

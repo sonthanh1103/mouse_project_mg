@@ -4148,6 +4148,20 @@
 .mw-800 { max-width: 800px !important;}
 .mw-900 { max-width: 900px !important;}
 .mw-1000 { max-width: 1000px !important;}
+
+.mh-100 { max-height: 100px; }
+.mh-200 { max-height: 200px; }
+.mh-300 { max-height: 300px; }
+.mh-400 { max-height: 400px; }
+.mh-500 { max-height: 500px; }
+.mh-600 { max-height: 600px; }
+.mh-700 { max-height: 700px; }
+.mh-800 { max-height: 800px; }
+.mh-900 { max-height: 900px; }
+.mh-1000 { max-height: 1000px; }
+
+.h-350 { height: 350px; }
+
 .min-160 { min-width: 160px !important;}
 .w-80 { width: 80px !important;}
 .w { width: 300px !important; }
