@@ -1,4 +1,4 @@
-import Sensor from "../models/sensor.js";
+import { Sensor } from "../models/index.js";
 import responseHelper from '../helpers/responseHelper.js';
 
 export const sensorPage = (req, res) => {

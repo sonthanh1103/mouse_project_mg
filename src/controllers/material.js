@@ -1,4 +1,4 @@
-import Material from "../models/material.js";
+import { Material } from "../models/index.js";
 import responseHelper from '../helpers/responseHelper.js'
 
 export const materialPage = (req, res) => {

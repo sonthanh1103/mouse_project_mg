@@ -1,4 +1,4 @@
-import FrontFlare from "../models/frontFlare.js";
+import { FrontFlare } from "../models/index.js";
 import responseHelper from '../helpers/responseHelper.js';
 
 export const frontFlarePage = (req, res) => {

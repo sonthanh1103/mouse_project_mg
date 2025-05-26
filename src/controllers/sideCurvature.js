@@ -1,4 +1,4 @@
-import SideCurvature from "../models/sideCurvature.js";
+import { SideCurvature } from "../models/index.js";
 import responseHelper from '../helpers/responseHelper.js';
 
 export const sideCurvaturePage = (req, res) => {

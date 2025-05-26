@@ -1,8 +1,15 @@
-import './brand.js';
-import './material.js';
-import './frontFlare.js';
-import './sideCurvature.js';
-import './sensor.js';
+import Brand from './brand.js';
+import Material from './material.js';
+import FrontFlare from './frontFlare.js';
+import SideCurvature from './sideCurvature.js';
+import Sensor from './sensor.js';
 import Product from './product.js';
 
-export { Product };
+export {
+  Product,
+  Brand,
+  Material,
+  FrontFlare,
+  SideCurvature,
+  Sensor
+};

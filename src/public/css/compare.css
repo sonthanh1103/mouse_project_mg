@@ -151,5 +151,10 @@
     border-radius: 50%; /* Để làm tròn */
     flex-shrink: 0; /* Đảm bảo không bị co lại trong flexbox */
     margin-right: 8px; /* Khoảng cách với chữ */
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Đường viền nhẹ để dễ nhìn hơn trên nền tối */
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
+
+#searchBox::placeholder {
+    color: rgb(172, 170, 170);
+    opacity: 1;
+  }

@@ -1,4 +1,4 @@
-import Brand from "../models/brand.js";
+import { Brand } from "../models/index.js";
 import responseHelper from '../helpers/responseHelper.js'
 
 export const brandPage = (req, res) => {

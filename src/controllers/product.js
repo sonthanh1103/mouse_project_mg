@@ -1,4 +1,4 @@
-import { Product } from '../models/index.js';
+import { Product, Brand } from '../models/index.js';
 import responseHelper from "../helpers/responseHelper.js";
 import mongoose from 'mongoose';
 
@@ -15,8 +15,8 @@ export const getProducts = async (req, res) => {
   try {
       const products = await Product.find({})
         .populate('material brand front_flare side_curvature sensor')
-        .lean()
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 })
+        .lean();
       responseHelper.success(res, products);
   } catch (error) {
       responseHelper.error(res, error.message)
@@ -101,27 +101,25 @@ export const delProducts = async (req, res) => {
   }
 };
 
+
+// search product: brand + name
 export const searchProducts = async (req, res) => {
   try {
     const q = (req.query.q || '').trim();
-
     if (!q) {
       return responseHelper.success(res, []);
     }
 
     const regex = new RegExp(q, 'i');
 
-    const products = await Product.find({
-      $or: [
-        { name: { $regex: regex } },
-      ]
-    })
-    .populate('brand')
-    .lean();
+    const products = await Product.find({})
+      .populate('brand')
+      .lean();
 
-    const filtered = products.filter(p =>
-      regex.test(p.name) || (p.brand && regex.test(p.brand.name))
-    )
+    const filtered = products.filter(p => {
+      const fullName = `${p.brand?.name || ''} ${p.name}`.trim();
+      return regex.test(fullName);
+    });
 
     return responseHelper.success(res, filtered);
   } catch (err) {
@@ -130,19 +128,8 @@ export const searchProducts = async (req, res) => {
   }
 };
 
-export const getSuggestedProducts = async (req, res) => {
-  try {
-    const products = await Product.find({})
-      .populate('brand material front_flare side_curvature sensor')
-      .sort({ createdAt: -1 })
-      .lean();
-    return responseHelper.success(res, products);
-  } catch (err) {
-    console.error('[getSuggestedProducts] ERROR:', err.stack);
-    return responseHelper.error(res, err.message);
-  }
-};
 
+// compare product
 export const compareProducts = async (req, res) => {
   try {
     const productIds = Array.isArray(req.body?.productIds)
