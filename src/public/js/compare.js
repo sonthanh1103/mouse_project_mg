@@ -49,6 +49,10 @@ $(function () {
           preserveAspectRatio: 'xMidYMid meet', width: '100%', height: '100%',
           stroke: color, 'stroke-width': 2, fill: 'none'
         }).css({ display: 'block', margin: 'auto', 'max-width': '100%', 'max-height': '100%', 'object-fit': 'contain' });
+
+        // Set circle fill color to match stroke color
+        $svgElement.find('circle').attr('fill', color);
+
         contentHtml = $('<div>').append($svgElement).html();
       } else if (/^(https?:\/\/|\/)\S+/.test(rawSvgContent)) {
         contentHtml = `<img src="${rawSvgContent}" alt="Mouse image" style="width:100%; height:100%; object-fit:contain;">`;
@@ -86,7 +90,7 @@ $(function () {
 
   function renderDropdown(items) {
     $searchSuggestions.empty();
-    if (!items.length) return $searchSuggestions.append('<div class="no-result list-group-item text-muted">No results</div>');
+    if (!items.length) return $searchSuggestions.append('<div class="list-group-item text-muted">No results</div>');
     items.forEach(p => {
       const brandName = p.brand?.name || '';
       const badge = p.isNew ? '<span class="badge-new">NEW</span>' : '';

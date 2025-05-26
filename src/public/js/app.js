@@ -58,8 +58,16 @@ function capitalizeFirst(str) {
 }
 
 // Generate a random hex color
+// function getRandomColor() {
+//   return '#' + Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6, '0');
+// }
 function getRandomColor() {
-  return '#' + Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6, '0'); 
+  const r = Math.floor(200 + Math.random() * 55); // 200–255
+  const g = Math.floor(200 + Math.random() * 55); // 200–255
+  const b = Math.floor(200 + Math.random() * 55); // 200–255
+  return '#' + [r, g, b]
+    .map(x => x.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 function renderPagination(pagination, searchParam = '') {
